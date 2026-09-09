@@ -56,31 +56,20 @@ Initial dependency installation needs access to PyPI and GitHub; CLI downloads
 use npm. Catalog checks do not require a GPU or model API key. On Windows, use
 `python` if your interpreter is not available as `python3`.
 
-Create a branch and scaffold a local skill interactively:
+Create a branch, scaffold a local skill, complete its instructions and Skill
+Card, then validate and open one pull request:
 
 ```bash
 git checkout -b feat/add-my-skill-name
-python3 scripts/contribute.py new my-skill-name
+python3 scripts/new_skill.py my-skill-name \
+  --owner "Owning team" \
+  --description "What it does, when it triggers, and the nearest case that must not trigger it." \
+  --license Apache-2.0 \
+  --category "Developer Tools"
 ```
 
-Answer the prompts for author/team, description, license and category. The
-command creates the files and local registration. Complete `SKILL.md` and
-`skill-card.md`, then set the card's lifecycle to `published` when ready.
-Generate the catalog and run all local checks with one command:
-
-```bash
-python3 scripts/contribute.py check
-```
-
-This includes unit tests, catalog policy, Agent Skills compatibility, generated
-file consistency, remote provenance (if present), and normal/full-depth CLI
-discovery. It regenerates catalog files but does not update remote mirrors.
-Review the diff, commit with `--signoff`, push your branch, and open a PR in the
-GitHub browser. **No `gh` installation is required.** The helper never creates
-branches, stages, commits, pushes or opens PRs; server checks and review still apply.
-
-To create a **new skill in a separate GitHub repository**, use the existing
-`scripts/new_skill.py` with `--repo <owner>/<repository>` and `--source-root <checkout>`.
+To create a **new skill in a separate GitHub repository**, pass
+`--repo <owner>/<repository>` together with `--source-root <checkout>`.
 To **import an existing skill**, register its real source and synchronize it;
 follow the [external import guide](docs/publishing/external-skills.md).
 Do not scaffold over an existing upstream package.
@@ -166,15 +155,18 @@ Later remote updates use the manual synchronization workflow, which opens or
 updates a PR. Automated PR creation requires a configured GitHub App; manually
 preparing an import and opening a PR does not require that App.
 
-Catalog maintainers can use the same unified checks:
+Catalog maintainers can run:
 
 ```bash
-python3 scripts/contribute.py check
+python3 scripts/generate_catalog.py
+python3 scripts/validate_skills.py
+python3 scripts/validate_agent_skills_spec.py
+python3 scripts/generate_catalog.py --check
 ```
 
-Apply remote updates separately with `scripts/sync_sources.py` after reviewing
-the source; `contribute.py check` only compares remote sources and never applies them.
-The individual scripts remain available for diagnosis and CI.
+For remote components, also run
+`python3 scripts/sync_sources.py --check --component <component-file-stem>`.
+The quick start and CONTRIBUTING include the remaining test and CLI discovery steps.
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for both paths.
 

@@ -7,15 +7,6 @@ here. Generated skill synchronization updates may be grouped by release.
 
 ### Added
 
-- `scripts/contribute.py new <name>` prompts for local skill metadata and reuses
-  the scaffold generator; `check [<name>]` regenerates the catalog and runs all
-  existing local tests, validators, remote comparison and both CLI discovery
-  modes. Metadata flags and `--dry-run` remain available. No GitHub CLI dependency
-  or automatic branch, staging, commit, push or PR operation is introduced.
-- Regression coverage for interactive/non-interactive scaffolding, cancellation,
-  dependency hints, preservation of existing files, and fail-fast propagation
-  of each check and CLI-output validation failure.
-
 - Layered repository foundation for published skills, staging, validation,
   product federation, and generated catalog metadata.
 - Normative repository layout, admission, publishing, and

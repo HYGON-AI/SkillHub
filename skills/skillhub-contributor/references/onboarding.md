@@ -2,18 +2,14 @@
 
 ## Scaffold command
 
-From a SkillHub checkout, create a local skill and its registration together:
+From the SkillHub checkout, generate the product-owned directory and component
+registration together:
 
 ```bash
-python3 scripts/contribute.py new example-skill --with-references
-```
-
-The prompts collect the author/team, description, license and an allowlisted
-category. For unattended use, pass all four explicitly:
-
-```bash
-python3 scripts/contribute.py new example-skill --non-interactive \
-  --owner "Maintaining Team" \
+python3 scripts/new_skill.py example-skill \
+  --source-root ../product-repository \
+  --repo HYGON-AI/product-repository \
+  --owner "Product Team" \
   --description "Describe the capability and when it should trigger." \
   --license Apache-2.0 \
   --category Inference \
@@ -21,13 +17,10 @@ python3 scripts/contribute.py new example-skill --non-interactive \
 ```
 
 Review with `--dry-run` when paths or repository checkouts are uncertain. The
-generated card deliberately remains `staging`; complete every `TODO`, record
-representative validation and limitations, and set `published` only after
+generated card deliberately remains `staging`; complete every `TODO`, replace
+the Eval prompts with real routing boundaries, and set `published` only after
 the evidence is ready. A local skill then lands in one pull request. For a
-new remote source skill, use `scripts/new_skill.py <name> --repo <owner>/<repository>`
-with `--source-root <checkout>`, `--owner`, `--description`, `--license` and
-`--category` (`--non-interactive` belongs only to the wrapper). Commit and merge
-the source repository first; the component
+remote component, commit and merge the product repository first; the component
 change remains local in SkillHub until the source ref contains the reviewed
 Skill. With `--with-references`, the generated `SKILL.md` links to the new
 `references/details.md` scaffold so contributors can state when detailed
@@ -35,8 +28,7 @@ material should be loaded.
 
 ## Component schema
 
-Local generation updates the shared `components.d/skillhub.yml`; do not create
-a second component for the same catalog repository. A local entry looks like:
+Create `components.d/<slug>.yml`. A local component is the default:
 
 ```yaml
 name: Component display name
@@ -73,10 +65,10 @@ For a catalog-owned prototype, begin with
 `staging/<skill-name>/SKILL.md.candidate`. Never use a real `SKILL.md` below
 `staging/`; deep discovery can install it before review. During promotion, move
 the candidate into `skills/<skill-name>/`, rename the entrypoint to `SKILL.md`,
-add its local component registration, and add the same Skill Card and license
-evidence required from every published skill.
+add its local component registration, and add the same Skill Card, Eval and
+license evidence required from every published skill.
 
-Each `catalog_dir` must be unique across the catalog and equal the skill's frontmatter `name`.
+Each `catalog_dir` must be unique across the catalog. Keep it equal to the skill frontmatter `name` unless a temporary compatibility alias is unavoidable.
 
 ## Release checklist
 
@@ -93,46 +85,32 @@ Each `catalog_dir` must be unique across the catalog and equal the skill's front
 - Scripts contain no embedded credentials and have been executed on a representative input.
 - The source repository has an explicit compatible license.
 - Required LICENSE and NOTICE material remains available after isolated installation.
-- A remote component records the reviewed source branch or release tag; its lock
-  pins the resolved commit and tree digest. Local components need neither.
+- The component registry points to an immutable release branch or the team's maintained default branch.
 - Local validation and catalog generation checks pass.
 
 ## Commands
 
 ```bash
-python3 scripts/contribute.py check
-```
-
-This regenerates catalog files and runs all local checks, including both pinned
-CLI discovery modes and their output validators. Install `requirements-dev.txt`,
-Git and Node.js/npm first; the helper does not install missing dependencies.
-Specifying a skill name only confirms its registration; checks remain global.
-
-For remote imports or updates, preview and apply separately before running the
-unified check:
-
-```bash
+python3 scripts/validate_skills.py
+python3 scripts/validate_agent_skills_spec.py
+python3 scripts/generate_catalog.py
+python3 scripts/generate_catalog.py --check
 python3 scripts/sync_sources.py --check --component product-slug
 python3 scripts/sync_sources.py --component product-slug
-python3 scripts/contribute.py check
+npx --yes skills@1.5.23 add . --list
+npx --yes skills@1.5.23 add . --list --full-depth
 ```
-
-First-import preview returns nonzero because no mirror/lock exists yet. Review
-the source and destinations before applying. `contribute.py check` never applies
-remote updates. Review its generated diff and submit manually with
-`git commit --signoff`, a branch push and a browser PR when authorized. No `gh` is required;
-PR Quality Gate, DCO and maintainer review are not replaced by local checks.
 
 After publication, verify discovery without installing:
 
 ```bash
-npx --yes skills@1.5.23 add HYGON-AI/skillhub --list
+npx skills add HYGON-AI/skillhub --list
 ```
 
 Install one skill non-interactively:
 
 ```bash
-npx --yes skills@1.5.23 add HYGON-AI/skillhub --skill example-skill --yes
+npx skills add HYGON-AI/skillhub --skill example-skill --yes
 ```
 
 ## Common failures

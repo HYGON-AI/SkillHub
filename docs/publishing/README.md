@@ -5,11 +5,9 @@ For the step-by-step contributor path, see
 
 ## Local skill (default)
 
-1. Run `python3 scripts/contribute.py new <name>` to create the local scaffold
-   and its `local: true` registration in `components.d/skillhub.yml`.
-2. Complete the self-contained skill and its Skill Card; set `published` when ready.
-3. Run `python3 scripts/contribute.py check` to regenerate metadata and run all
-   local catalog checks; submit with ordinary Git and a browser PR (`gh` optional).
+1. Add the self-contained skill under `skills/<skill-name>/` in this repository.
+2. Register it in `components.d/<component>.yml` with `local: true`.
+3. Regenerate metadata and run all catalog checks.
 4. Merge one protected pull request carrying content, registration and
    generated catalog files.
 5. Verify discovery from a clean checkout before announcing release.
