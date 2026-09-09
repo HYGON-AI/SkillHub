@@ -8,42 +8,59 @@
 
 Portable [Agent Skills](https://agentskills.io/specification) for [HYGON-AI](https://github.com/HYGON-AI) software, infrastructure, training, inference, operator and general engineering workflows.
 
-The default path is simple: **a skill lives in this repository and ships in one pull request.** Mirroring from a product repository stays available as an explicit opt-in, for teams that want a skill to evolve in the same repository as the code it documents.
+The default path is simple: **a skill lives in this repository and ships in one pull request.** You can also import a maintained skill from any GitHub organization or personal repository, preserving its upstream source, authorship and license.
 
 ## Quick start
 
-After the repository is published, browse or install skills with the standard [`skills` CLI](https://github.com/vercel-labs/skills):
+After publication to `HYGON-AI/skillhub`, browse or install skills with the standard
+[`skills` CLI](https://github.com/vercel-labs/skills). These examples use the
+same CLI version as our compatibility checks and require Node.js/npm:
 
 ```bash
-npx skills add HYGON-AI/skillhub --list
-npx skills add HYGON-AI/skillhub
+npx --yes skills@1.5.23 add HYGON-AI/skillhub --list
+npx --yes skills@1.5.23 add HYGON-AI/skillhub
 ```
 
 Install one skill into a specific agent without prompts:
 
 ```bash
-npx skills add HYGON-AI/skillhub --skill skillhub-contributor --agent claude-code --yes
+npx --yes skills@1.5.23 add HYGON-AI/skillhub --skill skillhub-contributor --agent claude-code --yes
 ```
 
-Pass `--agent` more than once to install into several agents, or `--agent '*'`
-for every agent the CLI detects:
+Pass `--agent` more than once to install into several supported agents:
 
 ```bash
-npx skills add HYGON-AI/skillhub --skill skillhub-contributor \
+npx --yes skills@1.5.23 add HYGON-AI/skillhub --skill skillhub-contributor \
   --agent claude-code --agent codex --agent cursor --yes
 ```
 
-The pinned CLI installs into any agent it recognizes -- `claude-code`, `codex`,
-`cursor`, `windsurf`, `gemini-cli`, `github-copilot`, `zed`, `trae` and around
-seventy others. Run `npx skills add HYGON-AI/skillhub` without `--agent` to pick
-from the agents detected on your machine. Skills in this catalog are portable
-and are not written for one agent.
+The CLI supports multiple agents, including `claude-code`, `codex` and `cursor`.
+Run the installation command without `--agent` to choose interactively where
+supported. Available agents depend on the CLI version and local environment;
+each skill's tools, permissions and runtime requirements still apply.
 
 ## Add a skill
 
-Scaffold a local skill, fill in the `TODO` markers, and open one pull request:
+External contributors should fork this repository, clone their fork, and run
+the following commands from its root. Team members with write access may clone
+this repository directly and contribute on a branch.
+
+Use Python 3.11 or 3.12 and Git; Node.js/npm is needed for CLI discovery (CI uses
+Node.js 22). Install the pinned Python dependencies once:
 
 ```bash
+python3 -m pip install -r requirements-dev.txt
+```
+
+Initial dependency installation needs access to PyPI and GitHub; CLI downloads
+use npm. Catalog checks do not require a GPU or model API key. On Windows, use
+`python` if your interpreter is not available as `python3`.
+
+Create a branch, scaffold a local skill, complete its instructions and Skill
+Card, then validate and open one pull request:
+
+```bash
+git checkout -b feat/add-my-skill-name
 python3 scripts/new_skill.py my-skill-name \
   --owner "Owning team" \
   --description "What it does, when it triggers, and the nearest case that must not trigger it." \
@@ -51,8 +68,14 @@ python3 scripts/new_skill.py my-skill-name \
   --category "Developer Tools"
 ```
 
-Pass `--repo HYGON-AI/<product>` instead to opt into a remote product source.
-See the [quick start](docs/publishing/quickstart.md) for the full walkthrough and
+To create a **new skill in a separate GitHub repository**, pass
+`--repo <owner>/<repository>` together with `--source-root <checkout>`.
+To **import an existing skill**, register its real source and synchronize it;
+follow the [external import guide](docs/publishing/external-skills.md).
+Do not scaffold over an existing upstream package.
+
+No separate eval dataset is required. Record actual validation and limitations
+in the Skill Card. See the [quick start](docs/publishing/quickstart.md) for the full walkthrough and
 [CONTRIBUTING.md](CONTRIBUTING.md) for the normative rules.
 
 ## Repository structure
@@ -117,31 +140,39 @@ A local skill, which is the default:
 
 1. The skill is written under `skills/<skill-name>/` in this repository.
 2. A `components.d/<component>.yml` file registers it with `local: true`.
-3. Admission review checks ownership, licensing, self-containment, routing data, and behavior evidence.
+3. Admission review checks ownership, licensing, self-containment, intended use, and the validation results and limitations recorded in the Skill Card.
 4. Validation checks naming, frontmatter, resources, Skill Cards, licenses, secrets, and generated catalog drift.
 5. One pull request lands the content, its registration and the regenerated catalog.
 
-A remote component, when a product team opts in:
+A remote component, when a catalog maintainer opts in:
 
 1. Select a self-contained skill from any maintained GitHub repository; see the [external import guide](docs/publishing/external-skills.md).
 2. A `components.d/<component>.yml` file records the repository, ref and source path.
 3. Synchronization mirrors the registered content and records the resolved commit and digest.
-4. The same admission and validation gates apply before the mirror lands.
+4. Registration, mirror, lock and regenerated catalog files go into one SkillHub PR; the same admission and validation requirements apply before merge.
+
+Later remote updates use the manual synchronization workflow, which opens or
+updates a PR. Automated PR creation requires a configured GitHub App; manually
+preparing an import and opening a PR does not require that App.
 
 Catalog maintainers can run:
 
 ```bash
+python3 scripts/generate_catalog.py
 python3 scripts/validate_skills.py
 python3 scripts/validate_agent_skills_spec.py
 python3 scripts/generate_catalog.py --check
-python3 scripts/sync_sources.py --check --component <component>
 ```
+
+For remote components, also run
+`python3 scripts/sync_sources.py --check --component <component-file-stem>`.
+The quick start and CONTRIBUTING include the remaining test and CLI discovery steps.
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for both paths.
 
-Catalog-owned candidates start under `staging/`. Remote product candidates stay
-in their product repositories until admission; `staging/` is not a second
-product mirror. A candidate entrypoint is named `SKILL.md.candidate` until its
+Catalog-owned prototypes may use `staging/`. Remote candidates stay
+in their source repositories until admission; `staging/` is not a second
+source mirror. A candidate entrypoint is named `SKILL.md.candidate` until its
 reviewed promotion into `skills/`, preventing deep-discovery clients from
 installing staging content.
 
@@ -149,9 +180,15 @@ installing staging content.
 
 The catalog publishes reviewed content; it does not make arbitrary third-party skills trusted. Consumers should still review executable scripts and permissions before installation.
 
-A **local skill** is reviewed here: its integrity rests on Git history,
-protected branches, required checks, CODEOWNERS review and DCO sign-off. It has
-no `.skillhub-lock.json` entry and no remote content digest.
+A **local skill** is reviewed here and has no `.skillhub-lock.json` entry or
+remote content digest. Its intended protection is Git history, protected
+branches, required checks, CODEOWNERS review and DCO sign-off.
+
+**Deployment status:** the PR Quality Gate workflow is configured in code, but
+the current repository still needs an isolated `quality` runner and required
+branch checks; automated synchronization also needs GitHub App credentials.
+Until these are configured and verified, workflow files alone do not enforce
+review or block merging. See the [repository settings checklist](docs/governance/repository-settings.md).
 
 A **remote component** additionally records its repository, ref, and source path
 in [`catalog.json`](catalog.json), with synchronized commits and tree digests in
@@ -159,7 +196,8 @@ in [`catalog.json`](catalog.json), with synchronized commits and tree digests in
 [supply-chain integrity](docs/security/supply-chain.md) for what each mode does
 and does not prove.
 
-CLI discovery proves format compatibility only. Published status additionally
+CLI discovery confirms that the installer can find the registered skills.
+Published status additionally
 requires the owner, license, source, lifecycle and validation limits recorded
 in `skill-card.md`. No separate eval dataset is required.
 The catalog additionally enforces exact remote commit/digest provenance and a
