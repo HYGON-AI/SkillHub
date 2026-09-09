@@ -16,8 +16,9 @@ documents.
 - Only direct children of `skills/` are published catalog identities.
 - Generated mirrors, catalog files and lock files are never repaired by hand.
 
-Use [`scripts/new_skill.py`](scripts/new_skill.py) for the mechanical scaffold
-or fall back to [`templates/skill/`](templates/skill). Read the
+Use [`scripts/contribute.py`](scripts/contribute.py) for interactive local
+scaffolding and unified checks. The underlying `scripts/new_skill.py` and
+[`templates/skill/`](templates/skill) remain available for advanced use. Read the
 [repository layout](docs/architecture/repository-layout.md),
 [admission policy](docs/governance/admission.md). Reuse the stable categories
 in the [catalog taxonomy](docs/governance/taxonomy.md).
@@ -37,17 +38,16 @@ Third-party skills may be mirrored unchanged when their license permits it and t
 For a condensed walkthrough with the common failure messages, see
 [Add a skill: quick start](docs/publishing/quickstart.md).
 
-Run the generator from a SkillHub checkout. Without `--repo` it creates the
-skill here and registers it with `local: true`:
+From a SkillHub checkout on your contribution branch, run:
 
 ```bash
-python3 scripts/new_skill.py quality-gate-audit \
-  --owner "Quality Gate Team" \
-  --description "Audit a repository when publication readiness must be verified." \
-  --license Apache-2.0 \
-  --category "Governance and Compliance" \
-  --with-references
+python3 scripts/contribute.py new quality-gate-audit --with-references
 ```
+
+Answer the prompts for author/team, description, reviewed license and category.
+The helper reuses the existing generator to create a local skill and update
+`components.d/skillhub.yml`. No separate registration step is needed. Optional
+metadata flags allow non-interactive use; see `contribute.py new --help`.
 
 Then:
 
@@ -56,16 +56,12 @@ Then:
 3. Regenerate and validate:
 
    ```bash
-   python3 scripts/generate_catalog.py
-   python3 scripts/validate_skills.py
-   python3 scripts/validate_agent_skills_spec.py
-   python3 scripts/generate_catalog.py --check
-   npx --yes skills@1.5.23 add . --list
-   npx --yes skills@1.5.23 add . --list --full-depth
+   python3 scripts/contribute.py check
    ```
 
-4. Open one pull request with the content, its registration and the regenerated
-   catalog files.
+4. Review the diff, commit with `--signoff`, push your branch and open one pull
+   request in the GitHub browser with the content, registration and regenerated
+   catalog. GitHub CLI (`gh`) is optional. Neither helper submits changes.
 
 A local component may omit `repo`; when present it must equal
 `HYGON-AI/skillhub`, and the skill's source path must equal
@@ -102,12 +98,7 @@ Then:
 
    ```bash
    python3 scripts/sync_sources.py --component <component>
-   python3 scripts/generate_catalog.py
-   python3 scripts/validate_skills.py
-   python3 scripts/validate_agent_skills_spec.py
-   python3 scripts/generate_catalog.py --check
-   npx --yes skills@1.5.23 add . --list
-   npx --yes skills@1.5.23 add . --list --full-depth
+   python3 scripts/contribute.py check
    ```
 
 7. Verify discovery from a clean checkout, then open a pull request with the owning team as reviewers.
@@ -119,7 +110,7 @@ restore scheduled synchronization and at what frequency.
 ## Generator notes
 
 Use `--dry-run` to review destinations first. The generator refuses to
-overwrite an existing skill, rejects unapproved repositories, categories and
+overwrite an existing skill, rejects malformed repositories, unapproved categories and
 generic names, and requires a non-empty source `LICENSE` unless
 `--license-file` names another reviewed license text. It copies a root
 `NOTICE`, `NOTICE.txt` or `NOTICE.md` automatically; use `--notice-file` for a
@@ -135,6 +126,28 @@ The generated Skill Card remains `staging` and its author-owned sections contain
 known limitations, then change the lifecycle to `published`. No eval dataset
 is required or generated. Upstream evaluation files may be retained as optional
 resources; this catalog does not execute or impose a dataset schema on them.
+
+## Unified local checks
+
+Install `requirements-dev.txt` with Python 3.11 or 3.12; Git and Node.js/npm are
+also required (CI uses Node.js 22). `python3 scripts/contribute.py check` runs:
+
+1. Catalog generation (updates README sections, `catalog.json`, `skills.sh.json`).
+2. All repository unit tests.
+3. Catalog policy and pinned Agent Skills reference validation.
+4. Generated-file consistency and read-only remote provenance checks.
+5. Pinned CLI discovery in normal and full-depth modes, validating both outputs
+   against the registered names and count.
+
+An optional skill name confirms its registration; it does not narrow the checks.
+The command stops on failure and does not auto-install dependencies, apply remote
+mirrors or modify Git branches/index/history. Inspect `git diff` after a failed
+check too: successful generation may already have updated catalog files. Network
+access is needed for npm downloads and for any registered remote sources.
+
+This is the local check set, not the PR Quality Gate, DCO or human approval, and
+it does not execute skill workflows. Existing individual scripts remain the CI
+entrypoints so CI can detect stale files without regenerating them first.
 
 ## Add a catalog-owned staging prototype
 

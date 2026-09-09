@@ -33,17 +33,14 @@ need to install our CI. Local contributions remain the default.
 
    ```bash
    python scripts/sync_sources.py --component tool-skills
-   python scripts/generate_catalog.py
-   python -m unittest discover -s tests
-   python scripts/validate_skills.py
-   python scripts/validate_agent_skills_spec.py
-   python scripts/generate_catalog.py --check
-   python scripts/sync_sources.py --check --component tool-skills
+   python scripts/contribute.py check
    ```
 
    Apply mode creates the mirror and lock entry. `--check` reports drift and
    exits nonzero for a first import without a mirror/lock; that is expected.
-   Follow CONTRIBUTING's normal and full-depth CLI discovery checks as well.
+   The unified check regenerates the catalog and includes the unit tests, policy,
+   specification, provenance, and normal/full-depth CLI discovery checks. It
+   requires the development dependencies, Git and Node.js/npm, not `gh`.
 4. Commit with sign-off and open a SkillHub PR containing the registration,
    mirror, `.skillhub-lock.json` and generated catalog files. Quality Gate,
    catalog validation and DCO must pass, followed by maintainer review.

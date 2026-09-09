@@ -1,47 +1,73 @@
 # Add a skill: quick start
 
-The end-to-end path for adding a skill. Steps 1-5 cover a local skill, which is
-the default; the last section covers importing an existing skill or authoring
-a new skill in any GitHub organization or personal repository. For the normative
-rules see
+For a local skill (the default), use two helper commands and submit with your
+normal Git workflow. The helper does not create branches, stage, commit, push,
+or open pull requests. **GitHub CLI (`gh`) is not required.** For the normative rules see
 [CONTRIBUTING.md](../../CONTRIBUTING.md); for the release flow see
 [publishing](README.md).
 
 ```
-new_skill.py
+contribute.py new <name>
   -> fill TODOs, set lifecycle: published
-  -> generate_catalog.py
-  -> validate
-  -> commit --signoff, open one pull request
+  -> contribute.py check
+  -> submit manually with Git and a browser PR
 ```
 
-## 1. Branch
+## Before you start (once per checkout)
+
+External contributors fork the repository on GitHub and clone their fork.
+Team members with write access can clone the repository directly. Run commands
+from the checkout root, with Python 3.11 or 3.12, Git and Node.js/npm installed
+(CI uses Node.js 22). Install the pinned Python dependencies:
+
+```bash
+python3 -m pip install -r requirements-dev.txt
+```
+
+On Windows, use `python` if `python3` is unavailable. Initial Python dependency
+installation needs PyPI/GitHub access; CLI downloads need npm access. No GPU or
+model API key is required for these catalog checks.
+
+Create your contribution branch using ordinary Git:
 
 ```bash
 git checkout -b feat/add-<skill-name>
 ```
 
-## 2. Scaffold
+## 1. Create
 
 ```bash
-python3 scripts/new_skill.py <skill-name> \
+python3 scripts/contribute.py new <skill-name>
+```
+
+Answer four prompts: author/maintaining team, capability and trigger description,
+reviewed license expression, and category (choose a number or exact name).
+The helper creates `skills/<skill-name>/`, copies the selected LICENSE and any
+required NOTICE, and adds the registration to `components.d/skillhub.yml`.
+It does not invent license terms or overwrite existing skills.
+
+Add `--dry-run` to preview destinations, `--with-openai` for optional agent UI
+metadata, or `--with-references` for a reference scaffold linked from `SKILL.md`.
+Use these only when needed. For automation or to avoid prompts, provide all
+four values explicitly:
+
+```bash
+python3 scripts/contribute.py new <skill-name> --non-interactive \
   --owner "Owning team" \
   --description "What it does, when it triggers, and the nearest case that must not trigger it." \
   --license Apache-2.0 \
-  --category "Performance and Profiling" \
-  --with-openai
+  --category "Developer Tools"
 ```
 
-Omitting `--repo` creates a local skill; `--component` is not needed, since
-local skills share the `skillhub` component. Add `--dry-run` first to review
-destinations, and `--with-references` if the skill needs a `references/`
-scaffold linked from `SKILL.md`.
+The default copied license is the checkout's root LICENSE. If your reviewed
+license differs, pass `--license-file <path>` and any required `--notice-file`.
+The declared expression and copied text must match; reviewers confirm this.
 
 The category must match [the taxonomy](../governance/taxonomy.md) exactly; a
 wrong value prints the allowed set. Bare generic names such as `profile`,
 `benchmark`, `test`, `build` and `deploy` are rejected.
 
-## 3. Fill in the content
+## 2. Complete the content and check
 
 This is the only step a generator cannot do.
 
@@ -56,40 +82,55 @@ This is the only step a generator cannot do.
 No separate eval file is needed. Describe what you actually tried, the observed
 results and known limitations in the Skill Card's **Validation** section.
 
-## 4. Generate and validate
+When the content is ready, run one command:
 
 ```bash
-python3 scripts/generate_catalog.py
-python3 scripts/validate_skills.py
-python3 scripts/validate_agent_skills_spec.py
-python3 scripts/generate_catalog.py --check
-npx --yes skills@1.5.23 add . --list
+python3 scripts/contribute.py check
 ```
 
-Run the generator before `--check`, or the check reports drift it just created.
+It generates the catalog, runs the unit tests, validates catalog policy and
+Agent Skills compatibility, checks generated files and remote provenance, and
+verifies normal/full-depth CLI discovery against the registered names and count.
+It stops on a failure and leaves the original error visible.
 
-## 5. Submit
+You can also run `python3 scripts/contribute.py check <skill-name>` to confirm
+that name is registered. **Both forms check the whole repository**, not just
+one skill. Local checks do not execute skill workflows or prove their behavior.
+
+The command may update README catalog sections, `catalog.json` and
+`skills.sh.json`; inspect the diff even after a later check fails. Remote
+components, if any, are fetched for comparison only. The helper does not apply
+remote updates, install missing dependencies or change Git's index/history.
+
+## 3. Submit yourself
+
+Review and stage only this contribution's files, then commit and push:
 
 ```bash
-git add -A
+git diff
+git status --short
+git add skills/<skill-name>/ components.d/skillhub.yml README.md catalog.json skills.sh.json
 git commit --signoff -m "feat(skills): add <skill-name>"
 git push -u origin feat/add-<skill-name>
-gh pr create --fill
 ```
 
-One pull request carries the content, its registration and the regenerated
-catalog files. `--signoff` is required; the DCO check fails without it.
+Open GitHub in your browser and create a pull request from your pushed branch
+to the catalog's `main` branch (from your fork if applicable). One PR carries
+the content, registration and regenerated catalog files. `--signoff` is required;
+the DCO check fails without it. Local success does not replace PR Quality Gate,
+DCO or maintainer review. If you already use `gh`, you can use it, but it is optional.
 
 ## Common failures
 
 | Message | Cause |
 | --- | --- |
 | `lifecycle must equal 'published'` | The Skill Card is still `staging` |
-| `unresolved scaffold placeholder` | A `TODO` or `Replace with` marker remains |
-| `Catalog files are out of date` | `generate_catalog.py` was not run before `--check` |
+| `unresolved scaffold placeholder` | A template-specific marker remains; complete the Skill Card's TODOs too |
+| `STALE: ...` | Catalog files drifted; rerun `contribute.py check` before submission |
 | `category must be one of: ...` | The category is not in the taxonomy allowlist |
 | `template scaffold file is not publishable` | A `.template` file was copied in unrenamed |
 | DCO check fails | The commit is missing `--signoff` |
+| `Missing Python dependencies` / `Missing tools on PATH` | Install `requirements-dev.txt`, Git and Node.js/npm; then retry |
 
 ## Remote components (opt-in)
 
@@ -105,8 +146,8 @@ An existing upstream package must already meet the publication contract;
 do not scaffold over an existing skill.
 
 Use the following authoring flow when a team maintains the skill in a separate GitHub
-repository and wants it to evolve alongside the code it documents. Everything
-above still applies; the differences are that the skill is authored elsewhere,
+repository and wants it to evolve alongside the code it documents. The same
+content and validation requirements apply; the differences are that the skill is authored elsewhere,
 the change lands in two repositories, and the mirror carries provenance.
 
 ```
@@ -115,7 +156,7 @@ new_skill.py --repo ...
   -> merge the source pull request FIRST
   -> sync_sources.py --check   (preview)
   -> sync_sources.py           (apply)
-  -> generate_catalog.py, validate
+  -> contribute.py check
   -> commit --signoff, open the SkillHub pull request
 ```
 
@@ -160,11 +201,7 @@ and registered destination before applying:
 
 ```bash
 python3 scripts/sync_sources.py --component <component>
-python3 scripts/generate_catalog.py
-python3 scripts/validate_skills.py
-python3 scripts/validate_agent_skills_spec.py
-python3 scripts/generate_catalog.py --check
-python3 scripts/sync_sources.py --check --component <component>
+python3 scripts/contribute.py check
 ```
 
 Applying the mirror also writes a `.skillhub-lock.json` entry recording the
