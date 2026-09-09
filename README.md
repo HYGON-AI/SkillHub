@@ -58,7 +58,7 @@ See the [quick start](docs/publishing/quickstart.md) for the full walkthrough an
 ## Repository structure
 
 The repository separates candidate content, source registration, published
-skills, evaluation evidence, and generated metadata:
+skills, validation records, and generated metadata:
 
 | Path | Purpose |
 | --- | --- |
@@ -67,7 +67,7 @@ skills, evaluation evidence, and generated metadata:
 | [`components.d/`](components.d) | One reviewed registration per component, local or remote |
 | [`templates/`](templates) | Non-discoverable contribution scaffolds |
 | [`assets/`](assets) | Repository-level README media; never skill content |
-| [`docs/`](docs) | Architecture, admission, evaluation and release policy |
+| [`docs/`](docs) | Architecture, admission and release policy |
 
 Every direct child of `skills/` is one catalog identity. Published skills must
 not contain nested `SKILL.md` files or depend on sibling skills. See the
@@ -118,7 +118,7 @@ A local skill, which is the default:
 1. The skill is written under `skills/<skill-name>/` in this repository.
 2. A `components.d/<component>.yml` file registers it with `local: true`.
 3. Admission review checks ownership, licensing, self-containment, routing data, and behavior evidence.
-4. Validation checks naming, frontmatter, resources, evaluation data, secrets, and generated catalog drift.
+4. Validation checks naming, frontmatter, resources, Skill Cards, licenses, secrets, and generated catalog drift.
 5. One pull request lands the content, its registration and the regenerated catalog.
 
 A remote component, when a product team opts in:
@@ -160,8 +160,8 @@ in [`catalog.json`](catalog.json), with synchronized commits and tree digests in
 and does not prove.
 
 CLI discovery proves format compatibility only. Published status additionally
-requires the owner, license, source and lifecycle recorded in `skill-card.md`,
-plus positive, negative and behavioral cases under `evals/evals.json`.
+requires the owner, license, source, lifecycle and validation limits recorded
+in `skill-card.md`. No separate eval dataset is required.
 The catalog additionally enforces exact remote commit/digest provenance and a
 pinned Agent Skills reference-validation pass; neither check alone proves that
 a Skill's operational behavior is correct.

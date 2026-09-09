@@ -285,27 +285,6 @@ def render_skill_card(config, template_root):
     return text
 
 
-def render_evals(config, template_root):
-    text = read_template(template_root, "evals/evals.json.template")
-    replacements = {
-        "replace-with-lowercase-hyphen-name": config.name,
-        "replace-positive-one": "positive-one",
-        "replace-positive-two": "positive-two",
-        "replace-positive-three": "positive-three",
-        "replace-negative-one": "negative-one",
-        "replace-negative-two": "negative-two",
-        "Replace with a realistic positive user request.": "TODO: Add a realistic positive request.",
-        "Replace with one observable behavior assertion.": "TODO: Add one observable behavior assertion.",
-        "Replace with a second positive request using different wording.": "TODO: Add a second positive request using different wording.",
-        "Replace with a boundary-positive request.": "TODO: Add a boundary-positive request.",
-        "Replace with a nearby task owned by another skill.": "TODO: Add a nearby request that must not trigger this skill.",
-        "Replace with a vocabulary match that should not trigger this skill.": "TODO: Add a vocabulary match that must not trigger this skill.",
-    }
-    for old, new in replacements.items():
-        text = text.replace(old, new)
-    return text
-
-
 def render_openai(config, template_root):
     text = read_template(template_root, "agents/openai.yaml.template")
     short_description = " ".join(config.description.split())[:160]
@@ -327,7 +306,6 @@ def render_files(config, template_root=TEMPLATE_ROOT):
     files = {
         Path("SKILL.md"): render_skill(config, template_root),
         Path("skill-card.md"): render_skill_card(config, template_root),
-        Path("evals/evals.json"): render_evals(config, template_root),
     }
     if config.with_openai:
         files[Path("agents/openai.yaml")] = render_openai(config, template_root)

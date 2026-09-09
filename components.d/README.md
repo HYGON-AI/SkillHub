@@ -55,5 +55,5 @@ Ambiguous bare names such as `profile`, `benchmark`, and `deploy` are rejected.
 
 Registration does not by itself grant published status. Every destination
 under `skills/` must also satisfy the flat per-skill layout, ownership,
-licensing, self-containment, `skill-card.md`, and `evals/evals.json` contracts
+licensing, self-containment, and `skill-card.md` contracts
 described in [`docs/governance/admission.md`](../docs/governance/admission.md).

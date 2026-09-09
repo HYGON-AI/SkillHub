@@ -52,10 +52,9 @@ This is the only step a generator cannot do.
 - **`skill-card.md`** -- replace each `TODO`, then **change `lifecycle: staging`
   to `published`**. State the validation boundary honestly: what was actually
   exercised, and what a passing check does not prove.
-- **`evals/evals.json`** -- at least 3 positive cases, 2 negative cases and 1
-  behavioural assertion. Write negatives as near misses from the same
-  vocabulary, not unrelated topics: a negative that could never trigger the
-  skill tests nothing.
+
+No separate eval file is needed. Describe what you actually tried, the observed
+results and known limitations in the Skill Card's **Validation** section.
 
 ## 4. Generate and validate
 

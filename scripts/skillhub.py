@@ -17,7 +17,6 @@ OFFICIAL_GITHUB_OWNER = "HYGON-AI"
 CATALOG_REPO = OFFICIAL_GITHUB_OWNER + "/skillhub"
 CATALOG_REF = "main"
 SKILL_NAME_RE = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
-EVAL_ID_RE = SKILL_NAME_RE
 REPO_RE = re.compile(r"^[A-Za-z0-9](?:[A-Za-z0-9-]*[A-Za-z0-9])?/(?!\.{1,2}$)[A-Za-z0-9_.-]+$")
 REF_RE = re.compile(r"^[A-Za-z0-9._/-]+$")
 COMMIT_RE = re.compile(r"^[0-9a-f]{40}$")
@@ -59,15 +58,6 @@ FORBIDDEN_GENERIC_CATALOG_DIRS = frozenset((
     "profile",
     "test",
 ))
-ALLOWED_EVAL_FIELDS = frozenset((
-    "id",
-    "prompt",
-    "skill_should_trigger",
-    "expected_behavior",
-    "unexpected_behavior",
-    "logs_contain",
-    "files_exist",
-))
 MAX_DESCRIPTION_LENGTH = 1024
 MAX_COMPATIBILITY_LENGTH = 500
 MAX_SKILL_LINES = 500
@@ -108,12 +98,6 @@ SECRET_PATTERNS = (
     ("private key", re.compile(r"-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----")),
     ("GitHub token", re.compile(r"\bgh(?:p|o|u|s|r)_[A-Za-z0-9]{20,}\b")),
     ("AWS access key", re.compile(r"\bAKIA[0-9A-Z]{16}\b")),
-)
-BEHAVIOR_ASSERTION_FIELDS = (
-    "expected_behavior",
-    "unexpected_behavior",
-    "logs_contain",
-    "files_exist",
 )
 SKILL_TEMPLATE_PLACEHOLDERS = (
     "replace-with-lowercase-hyphen-name",
@@ -749,93 +733,6 @@ def validate_markdown_links(skill_dir, root=ROOT):
     return errors
 
 
-def validate_eval_dataset(path, root=ROOT, expected_skill=None):
-    errors = []
-    try:
-        value = load_json(path, root)
-    except CatalogError as exc:
-        return [str(exc)]
-    allowed_top_level = {"schema_version", "skill", "evaluations"}
-    extra_top_level = sorted(set(value) - allowed_top_level)
-    if extra_top_level:
-        errors.append("{}: unsupported top-level fields: {}".format(
-            path.relative_to(root), ", ".join(extra_top_level)))
-    if value.get("schema_version") != 1:
-        errors.append("{}: schema_version must equal 1".format(path.relative_to(root)))
-    if expected_skill is not None and value.get("skill") != expected_skill:
-        errors.append("{}: skill must equal '{}'".format(
-            path.relative_to(root), expected_skill))
-    elif expected_skill is None and (
-            not isinstance(value.get("skill"), str) or not value["skill"].strip()):
-        errors.append("{}: skill must be a non-empty string".format(path.relative_to(root)))
-    evaluations = value.get("evaluations")
-    if not isinstance(evaluations, list) or not evaluations:
-        return errors + ["{}: evaluations must be a non-empty list".format(path.relative_to(root))]
-
-    seen_ids = set()
-    seen_prompts = set()
-    positives = 0
-    negatives = 0
-    behavior_cases = 0
-    for index, case in enumerate(evaluations):
-        label = "{}: evaluations[{}]".format(path.relative_to(root), index)
-        if not isinstance(case, dict):
-            errors.append("{} must be an object".format(label))
-            continue
-        extra_case_fields = sorted(set(case) - ALLOWED_EVAL_FIELDS)
-        if extra_case_fields:
-            errors.append("{}: unsupported fields: {}".format(
-                label, ", ".join(extra_case_fields)))
-        case_id = case.get("id")
-        if not isinstance(case_id, str) or not case_id.strip():
-            errors.append("{}: id must be a non-empty string".format(label))
-        elif not EVAL_ID_RE.match(case_id):
-            errors.append("{}: id must use lowercase hyphen-case".format(label))
-        elif case_id in seen_ids:
-            errors.append("{}: duplicate id '{}'".format(label, case_id))
-        else:
-            seen_ids.add(case_id)
-        prompt = case.get("prompt")
-        if not isinstance(prompt, str) or not prompt.strip():
-            errors.append("{}: prompt must be a non-empty string".format(label))
-        elif prompt.strip() in seen_prompts:
-            errors.append("{}: duplicate prompt".format(label))
-        else:
-            seen_prompts.add(prompt.strip())
-        should_trigger = case.get("skill_should_trigger")
-        if not isinstance(should_trigger, bool):
-            errors.append("{}: skill_should_trigger must be true or false".format(label))
-        elif should_trigger:
-            positives += 1
-        else:
-            negatives += 1
-
-        has_behavior = False
-        for field in BEHAVIOR_ASSERTION_FIELDS:
-            if field not in case:
-                continue
-            assertions = case[field]
-            if not isinstance(assertions, list) or not assertions or not all(
-                    isinstance(item, str) and item.strip() for item in assertions):
-                errors.append("{}: {} must be a non-empty list of non-empty strings".format(
-                    label, field))
-            else:
-                has_behavior = True
-        if should_trigger is True and has_behavior:
-            behavior_cases += 1
-
-    if positives < 3:
-        errors.append("{}: requires at least 3 positive trigger cases; found {}".format(
-            path.relative_to(root), positives))
-    if negatives < 2:
-        errors.append("{}: requires at least 2 negative trigger cases; found {}".format(
-            path.relative_to(root), negatives))
-    if behavior_cases < 1:
-        errors.append("{}: requires at least 1 positive case with a behavioral assertion".format(
-            path.relative_to(root)))
-    return errors
-
-
 def validate_catalog(root=ROOT):
     errors = []
     warnings = []
@@ -899,13 +796,6 @@ def validate_catalog(root=ROOT):
         license_file = record["dir"] / "LICENSE"
         if not license_file.is_file() or license_file.stat().st_size == 0:
             errors.append("{}: a non-empty LICENSE file is required in every published package".format(rel))
-
-        eval_file = record["dir"] / "evals" / "evals.json"
-        if not eval_file.is_file():
-            errors.append("{}: evals/evals.json is required for published skills".format(rel))
-        else:
-            errors.extend(validate_eval_dataset(
-                eval_file, root, record["spec"]["catalog_dir"]))
 
         openai_yaml = record["dir"] / "agents" / "openai.yaml"
         if openai_yaml.exists():

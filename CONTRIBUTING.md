@@ -19,8 +19,7 @@ documents.
 Use [`scripts/new_skill.py`](scripts/new_skill.py) for the mechanical scaffold
 or fall back to [`templates/skill/`](templates/skill). Read the
 [repository layout](docs/architecture/repository-layout.md),
-[admission policy](docs/governance/admission.md), and
-[evaluation contract](docs/evaluation/README.md). Reuse the stable categories
+[admission policy](docs/governance/admission.md). Reuse the stable categories
 in the [catalog taxonomy](docs/governance/taxonomy.md).
 
 Workflow files are not enforcement by themselves. Before production release,
@@ -52,7 +51,7 @@ python3 scripts/new_skill.py quality-gate-audit \
 
 Then:
 
-1. Replace every `TODO` in `SKILL.md`, `skill-card.md` and `evals/evals.json`.
+1. Replace the scaffold `TODO` sections in `SKILL.md` and `skill-card.md`.
 2. Set the Skill Card lifecycle to `published` once the evidence is real.
 3. Regenerate and validate:
 
@@ -94,7 +93,7 @@ python3 scripts/new_skill.py quality-gate-audit \
 
 Then:
 
-1. Add `skill-card.md`, `evals/evals.json`, required license and NOTICE material, and any self-contained resources.
+1. Add `skill-card.md`, required license and NOTICE material, and any self-contained resources.
 2. Confirm the owning team approved public release and the source license permits redistribution.
 3. Keep one `components.d/<component>.yml` per product team; do not edit another team's registry file.
 4. **Merge the product-repository change first.**
@@ -131,9 +130,11 @@ mismatches; it does not determine legal terms or compatibility. Reviewers must
 confirm that `--license` matches the copied text and that all NOTICE obligations
 are satisfied.
 
-The generated Skill Card remains `staging` and its author-owned sections and
-Eval prompts contain `TODO` markers. Replace them with real workflow,
-permission and evaluation evidence, then change the lifecycle to `published`.
+The generated Skill Card remains `staging` and its author-owned sections contain
+`TODO` markers. Fill in the workflow, permissions, representative validation and
+known limitations, then change the lifecycle to `published`. No eval dataset
+is required or generated. Upstream evaluation files may be retained as optional
+resources; this catalog does not execute or impose a dataset schema on them.
 
 ## Add a catalog-owned staging prototype
 
@@ -162,9 +163,7 @@ discovery.
 - Bundle every required dependency inside the skill directory. Do not depend on sibling skills or source-repository files that an installer will not copy.
 - Add a schema-versioned `skill-card.md` with machine-readable owner, source,
   license and lifecycle frontmatter plus the required human-readable sections.
-- Add schema-versioned `evals/evals.json` with the matching skill identity, at
-  least three positive triggers, two negative triggers, and one behavioral
-  assertion.
+- Describe representative validation and known limitations in the Skill Card.
 - Use only the standard optional directories `agents/`, `references/`, `scripts/`, and `assets/` unless a documented format requires another path.
 - Put repeatable deterministic operations in tested `scripts/`.
 - Do not include credentials, private endpoints, personal data, generated caches, or unrelated documentation.
@@ -184,7 +183,7 @@ discovery.
 - [ ] The installed skill retains required LICENSE and NOTICE material.
 - [ ] Scripts were reviewed and tested.
 - [ ] `skill-card.md` identifies owner, source, license, lifecycle, runtime permissions, and validation boundary.
-- [ ] `evals/evals.json` contains the minimum positive, negative, and behavioral evidence.
+- [ ] The Skill Card states what was actually validated and what remains untested.
 - [ ] The skill contains no nested `SKILL.md` or sibling-skill dependency.
 - [ ] `python3 scripts/validate_skills.py` passes.
 - [ ] `python3 scripts/validate_agent_skills_spec.py` passes against the pinned reference implementation.

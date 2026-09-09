@@ -71,7 +71,6 @@ class NewSkillTests(unittest.TestCase):
             expected = {
                 "SKILL.md",
                 "skill-card.md",
-                "evals/evals.json",
                 "agents/openai.yaml",
                 "references/details.md",
                 "LICENSE",

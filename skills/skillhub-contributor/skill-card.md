@@ -41,7 +41,8 @@ synchronization preview are read-only.
 
 The catalog's unit tests, structural validation, generated catalog check, and
 skills CLI discovery are the applicable evidence. They do not prove that a
-newly contributed skill behaves correctly; each skill needs its own routing and
-behavior evidence. A local skill has no lock entry or content digest, so its
+newly contributed skill behaves correctly; each skill should describe actual
+validation and limitations in its Skill Card, without a separate eval form.
+A local skill has no lock entry or content digest, so its
 integrity evidence is review, protected branches, required checks and DCO
 rather than remote provenance.

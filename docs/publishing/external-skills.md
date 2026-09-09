@@ -8,7 +8,7 @@ need to install our CI. Local contributions remain the default.
 
 1. Confirm the license permits redistribution, preserve upstream attribution
    and required LICENSE/NOTICE files, and identify a catalog maintainer in the
-   PR. The upstream package must already include a matching Skill Card and evals.
+   PR. The upstream package must already include a matching Skill Card.
    If it lacks them, ask upstream to add them or maintain a licensed local copy
    with original attribution. Do not patch a remote mirror by hand.
 2. Create a contribution branch and add `components.d/tool-skills.yml`:
@@ -26,7 +26,7 @@ need to install our CI. Local contributions remain the default.
 
    Replace the example repository and path with the actual source. `ref` is an
    existing branch or release tag. `catalog_dir` must be globally unique and
-   match the Skill's frontmatter `name` and eval identity. Skill Card source
+   match the Skill's frontmatter `name`. Skill Card source
    metadata must match the registered repository and source path. One component
    registers one repository and one ref.
 3. Import and validate from the SkillHub root:

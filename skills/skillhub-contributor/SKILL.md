@@ -34,10 +34,10 @@ product repository or inside this installed skill.
 ## Workflow
 
 1. Confirm the owning team, the mode, license, and intended user prompts.
-2. For a new skill, use `python3 scripts/new_skill.py --help` from the SkillHub checkout. Without `--repo` it creates a local skill; `--repo` authors a new package in a separate source checkout. For an existing upstream skill, register its real repository/path directly without scaffolding over it; confirm its card, evals and license already meet admission requirements.
+2. For a new skill, use `python3 scripts/new_skill.py --help` from the SkillHub checkout. Without `--repo` it creates a local skill; `--repo` authors a new package in a separate source checkout. For an existing upstream skill, register its real repository/path directly without scaffolding over it; confirm its card and license already meet admission requirements. Do not require or generate a separate eval dataset.
 3. Use lowercase letters, digits, and hyphens for the directory and frontmatter `name`, and keep the name globally descriptive.
 4. Keep `SKILL.md` focused on procedures the agent cannot infer. Put detailed knowledge in `references/`, deterministic helpers in `scripts/`, and output material in `assets/`. Do not nest another `SKILL.md`.
-5. Replace every `TODO` in `SKILL.md`, `skill-card.md` and `evals/evals.json`, then set the Skill Card lifecycle to `published`.
+5. Complete the scaffold sections in `SKILL.md` and `skill-card.md`, record actual validation and limitations, then set the Skill Card lifecycle to `published`.
 6. Review the generated `components.d/<component>.yml` change, or add it manually. Map every `path` to a globally unique `catalog_dir` and choose an allowlisted category.
 7. Run `python3 scripts/generate_catalog.py`, then `python3 scripts/validate_skills.py`, `python3 scripts/validate_agent_skills_spec.py`, and `python3 scripts/generate_catalog.py --check` from the SkillHub root.
 8. For a remote component only, preview synchronization with `python3 scripts/sync_sources.py --check --component <component-file-stem>`. The check must prove the ref, resolved commit, source digest, lock entry, and published tree agree. Apply it only after reviewing the reported destinations.

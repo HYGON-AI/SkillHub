@@ -13,7 +13,7 @@ Describe the skill, owning product, source repository, and intended user prompts
 - [ ] The installed directory retains required LICENSE and NOTICE material.
 - [ ] Executable scripts and dependencies were reviewed.
 - [ ] `skill-card.md` records owner, source, license, lifecycle, permissions, and validation boundary.
-- [ ] `evals/evals.json` contains at least 3 positive cases, 2 negative cases, and 1 behavioral assertion.
+- [ ] The Skill Card describes actual validation results and known limitations.
 - [ ] The published skill is flat and contains no nested `SKILL.md` or sibling-skill dependency.
 - [ ] No credentials, private endpoints, customer data, or unpublished information are included.
 - [ ] Local validation and generated-catalog checks pass.

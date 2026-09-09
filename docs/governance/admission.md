@@ -30,8 +30,8 @@ Before synchronization or publication, record:
   present.
 - `skill-card.md` has schema version 1, matches the component source, and
   identifies owner, license and published lifecycle.
-- `evals/evals.json` has schema version 1, matches the Skill identity, and
-  contains positive, negative and behavior evidence.
+- The Skill Card describes representative validation and its limitations.
+  A separate eval dataset is not required; optional upstream tests may remain.
 - Executable helpers are reviewed and tested on representative input.
 - Secret, license, link, file-size and generated-catalog checks pass.
 - For a local skill, the component sets `local: true`, any `repo` equals

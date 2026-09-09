@@ -7,9 +7,9 @@ here. Generated skill synchronization updates may be grouped by release.
 
 ### Added
 
-- Layered repository foundation for published skills, staging, evaluation,
+- Layered repository foundation for published skills, staging, validation,
   product federation, and generated catalog metadata.
-- Normative repository layout, admission, evaluation, publishing, and
+- Normative repository layout, admission, publishing, and
   supply-chain documentation.
 - Production repository-settings baseline for protected reviews, required
   checks, DCO, private vulnerability reporting, and synchronization authority.
@@ -20,6 +20,12 @@ here. Generated skill synchronization updates may be grouped by release.
   `SKILL.md` entrypoints.
 
 ### Changed
+
+- Removed the mandatory `evals/evals.json` dataset, its schema/count validation,
+  scaffold generation, existing catalog forms and evaluation-contract document.
+  No model evaluation runner existed; static dataset acceptance was not behavior
+  evidence. Record actual validation and limitations in the Skill Card instead.
+  Optional upstream evaluation resources remain allowed and synchronized intact.
 
 - Remote components, scaffolds and admission exceptions accept any GitHub
   owner/repository. Local identity and all package/provenance gates remain enforced.
@@ -38,14 +44,14 @@ here. Generated skill synchronization updates may be grouped by release.
   synchronization use the declared minimum Python 3.11 runtime.
 - The product Skill generator warns about obvious standard-license declaration
   mismatches without replacing mandatory human license and NOTICE review.
-- Published skills require a skill card and a minimum routing/behavior dataset.
+- Published skills require a skill card with actual validation and limitations.
 - Nested `SKILL.md` dependencies are rejected in the flat catalog.
 - Relative Markdown links are validated recursively across each skill package.
 - Remote lock entries carry and verify the source-tree SHA-256 digest.
 - Synchronization rejects symlinks and special files before copying source content.
 - Agent Skills frontmatter now supports and type-checks all six specification
   fields while rejecting vendor-specific top-level fields.
-- Skill Cards and Eval datasets now carry schema version and source/identity
+- Skill Cards carry schema version and source/identity
   bindings that are validated before publication.
 - Remote checks now bind the resolved ref, commit, source digest, lock entry
   and published tree; published packages also have file-count, size, cache and

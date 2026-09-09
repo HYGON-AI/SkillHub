@@ -3,7 +3,7 @@
 ## Design goals
 
 HYGON-AI SkillHub separates authored content, admission review, published
-content, generated metadata and evaluation evidence. A skill is local by
+content, generated metadata and validation records. A skill is local by
 default: it lives here and is registered with `local: true`. Mirroring from a
 product repository is an explicit opt-in, and the separation prevents such a
 mirror from becoming a second hand-edited source of truth.
@@ -50,8 +50,6 @@ skills/
 skills/<skill-name>/
 ├── SKILL.md                  # Required instructions and trigger metadata
 ├── skill-card.md             # Required structured owner, source, license and lifecycle
-├── evals/
-│   └── evals.json            # Required routing and behavior cases
 ├── agents/
 │   └── openai.yaml           # Recommended UI and invocation metadata
 ├── references/               # Optional detailed documentation

@@ -79,8 +79,8 @@ Each `catalog_dir` must be unique across the catalog. Keep it equal to the skill
 - The published directory is flat and contains no nested `SKILL.md`.
 - `skill-card.md` uses schema version 1 and binds owner, component source,
   license and published lifecycle.
-- `evals/evals.json` uses schema version 1, names the Skill, and contains at
-  least three positive triggers, two negative triggers, and one behavior assertion.
+- The Skill Card records representative validation and known limitations.
+  A separate eval dataset is not required.
 - Relative Markdown links in `SKILL.md`, `skill-card.md`, and references resolve inside the skill directory.
 - Scripts contain no embedded credentials and have been executed on a representative input.
 - The source repository has an explicit compatible license.

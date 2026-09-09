@@ -57,7 +57,7 @@ LABEL_PAD_CH = 6  # extra character-widths of breathing room per block
 GAP = 8           # px between blocks
 
 CMD = "npx skills add HYGON-AI/skillhub"
-FOOT = "every skill ships a skill-card and evals"
+FOOT = "every skill records source and validation"
 
 N_FRAMES = 76
 SWEEP_A, SWEEP_B = 4, 56

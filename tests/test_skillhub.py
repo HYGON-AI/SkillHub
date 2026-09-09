@@ -2,6 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 import sys
+import shutil
 import tempfile
 import unittest
 from pathlib import Path
@@ -10,8 +11,8 @@ from scripts.skillhub import (
     ALLOWED_CATEGORIES,
     CatalogError,
     load_components,
+    validate_catalog,
     validate_admission_exceptions,
-    validate_eval_dataset,
     validate_inline_skill_dependencies,
     validate_lock,
     validate_markdown_links,
@@ -436,63 +437,33 @@ Validated.
             self.assertEqual(validate_skill_card(path, record, root), [])
 
 
-class EvaluationDatasetTests(unittest.TestCase):
-    def test_accepts_minimum_routing_and_behavior_dataset(self):
+class PublicationContractTests(unittest.TestCase):
+    def test_evals_are_not_required_but_card_and_license_still_are(self):
         with tempfile.TemporaryDirectory() as temp:
             root = Path(temp)
-            path = root / "evals.json"
-            path.write_text(
-                """{
-  "schema_version": 1,
-  "skill": "example",
-  "evaluations": [
-    {"id": "p1", "skill_should_trigger": true, "prompt": "positive one", "expected_behavior": ["do the work"]},
-    {"id": "p2", "skill_should_trigger": true, "prompt": "positive two"},
-    {"id": "p3", "skill_should_trigger": true, "prompt": "positive three"},
-    {"id": "n1", "skill_should_trigger": false, "prompt": "negative one"},
-    {"id": "n2", "skill_should_trigger": false, "prompt": "negative two"}
-  ]
-}
-""",
-                encoding="utf-8",
+            name = "skillhub-contributor"
+            skill = root / "skills" / name
+            shutil.copytree(Path(__file__).resolve().parents[1] / "skills" / name, skill)
+            self.assertFalse((skill / "evals" / "evals.json").exists())
+            (root / ".skillhub-lock.json").write_text('{"schema_version": 1, "skills": {}}\n')
+            (root / "admission-exceptions.yml").write_text('schema_version: 1\nexceptions: []\n')
+            (root / "staging").mkdir()
+            (root / "components.d").mkdir()
+            (root / "components.d" / "skillhub.yml").write_text(
+                "name: SkillHub\nlocal: true\ndescription: Local fixture.\nskills:\n"
+                f"  - path: skills/{name}\n    catalog_dir: {name}\n"
+                "    category: Developer Tools\n", encoding="utf-8",
             )
-            self.assertEqual(validate_eval_dataset(path, root, "example"), [])
-
-    def test_rejects_thin_routing_only_dataset(self):
-        with tempfile.TemporaryDirectory() as temp:
-            root = Path(temp)
-            path = root / "evals.json"
-            path.write_text(
-                '{"schema_version": 1, "skill": "example", "evaluations": [{"id": "p1", "skill_should_trigger": true, "prompt": "positive"}]}',
-                encoding="utf-8",
-            )
-            errors = validate_eval_dataset(path, root, "example")
-            self.assertTrue(any("at least 3 positive" in error for error in errors))
-            self.assertTrue(any("at least 2 negative" in error for error in errors))
-            self.assertTrue(any("behavioral assertion" in error for error in errors))
-
-    def test_rejects_eval_identity_mismatch_and_unknown_case_field(self):
-        with tempfile.TemporaryDirectory() as temp:
-            root = Path(temp)
-            path = root / "evals.json"
-            path.write_text(
-                """{
-  "schema_version": 1,
-  "skill": "other",
-  "evaluations": [
-    {"id": "p1", "skill_should_trigger": true, "prompt": "one", "expected_behavior": ["ok"], "tags": []},
-    {"id": "p2", "skill_should_trigger": true, "prompt": "two"},
-    {"id": "p3", "skill_should_trigger": true, "prompt": "three"},
-    {"id": "n1", "skill_should_trigger": false, "prompt": "four"},
-    {"id": "n2", "skill_should_trigger": false, "prompt": "five"}
-  ]
-}
-""",
-                encoding="utf-8",
-            )
-            errors = validate_eval_dataset(path, root, "example")
-            self.assertTrue(any("skill must equal 'example'" in error for error in errors))
-            self.assertTrue(any("unsupported fields: tags" in error for error in errors))
+            self.assertEqual(validate_catalog(root)[0], [])
+            # Upstream may ship its own evaluation format; do not impose a schema.
+            (skill / "evals").mkdir(exist_ok=True)
+            (skill / "evals" / "evals.json").write_text('{"custom_cases": []}\n')
+            self.assertEqual(validate_catalog(root)[0], [])
+            (skill / "skill-card.md").unlink()
+            (skill / "LICENSE").unlink()
+            errors = validate_catalog(root)[0]
+            self.assertTrue(any("skill-card.md is required" in error for error in errors))
+            self.assertTrue(any("LICENSE file is required" in error for error in errors))
 
 
 class LockFileTests(unittest.TestCase):
@@ -519,7 +490,7 @@ class AdmissionExceptionTests(unittest.TestCase):
             root = Path(temp)
             (root / "admission-exceptions.yml").write_text(
                 "schema_version: 1\nexceptions:\n  - repo: someone/tool-skills\n"
-                "    path: skills/example\n    reasons:\n      - Missing evals.\n",
+                "    path: skills/example\n    reasons:\n      - Missing license.\n",
                 encoding="utf-8",
             )
             self.assertEqual(validate_admission_exceptions([], root), [])

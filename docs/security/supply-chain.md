@@ -10,7 +10,7 @@ A local skill's only source of truth is this repository:
 - the component sets `local: true`;
 - an omitted `repo` normalizes to `HYGON-AI/skillhub`, and any other value is rejected;
 - the source path must equal `skills/<catalog_dir>` exactly;
-- content, registration, evaluation data, licensing and generated catalog files
+- content, registration, validation records, licensing and generated catalog files
   are reviewed in a single pull request.
 
 A local skill has **no `.skillhub-lock.json` entry and no remote content
