@@ -103,7 +103,7 @@ class NewSkillTests(unittest.TestCase):
             self.assertNotIn("Replace with", authored)
             self.assertNotIn("replace-with", authored)
             self.assertIn("name: quality-gate-audit", authored)
-            self.assertIn("lifecycle: staging", authored)
+            self.assertIn("lifecycle: published", authored)
             self.assertIn("$quality-gate-audit", authored)
 
             component = yaml.safe_load(

@@ -5,6 +5,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 import argparse
+from dataclasses import replace
 import importlib
 import importlib.util
 import os
@@ -36,6 +37,7 @@ def parse_args(argv=None):
     new.add_argument("--description", help="capability and trigger-boundary description")
     new.add_argument("--license", default="Apache-2.0", help="original contributions default to the repository Apache-2.0 license")
     new.add_argument("--category", help="exact category from the taxonomy")
+    new.add_argument("--runtime-permissions", help="runtime requirements and permissions; may refer to SKILL.md")
     new.add_argument("--license-file", help="optional license text to bundle")
     new.add_argument("--notice-file", help="required notice; defaults to an existing root NOTICE")
     new.add_argument("--with-openai", action="store_true", help="create agents/openai.yaml")
@@ -47,6 +49,7 @@ def parse_args(argv=None):
     importer.add_argument("--owner", help="maintainer when not recorded in the original Skill Card or metadata.author")
     importer.add_argument("--license", help="preserve source declarations; undeclared original contributions default to Apache-2.0")
     importer.add_argument("--category", help="exact catalog category; prompt if it cannot be reused")
+    importer.add_argument("--runtime-permissions", help="runtime requirements and permissions; may refer to SKILL.md")
     importer.add_argument("--license-file", help="reviewed license text if not bundled; relative to the current directory")
     importer.add_argument("--notice-file", help="additional required NOTICE if not bundled; never overwrites an existing notice")
     importer.add_argument("--upstream", help="optional origin or attribution text; not required for original contributions")
@@ -110,6 +113,11 @@ def new_skill(args, root):
             argv.append(f"--{field.replace('_', '-')}")
     try:
         config = generator.config_from_args(generator.parse_args(argv))
+        runtime_permissions = args.runtime_permissions or (
+            config.runtime_permissions if args.non_interactive else
+            prompt_value("Runtime requirements and permissions (or enter: see SKILL.md)")
+        )
+        config = replace(config, runtime_permissions=runtime_permissions)
         generator.create_scaffold(config, root / "templates" / "skill")
     except generator.ScaffoldError as exc:
         raise ContributionError(str(exc)) from exc

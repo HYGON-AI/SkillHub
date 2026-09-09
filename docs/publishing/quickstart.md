@@ -8,7 +8,7 @@ normative rules see
 
 ```
 contribute.py new | import
-  -> review SKILL.md and skill-card.md; set lifecycle: published
+  -> review SKILL.md and generated skill-card.md (already published)
   -> contribute.py check
   -> commit --signoff, open one pull request
 ```
@@ -43,7 +43,7 @@ python3 scripts/contribute.py import ../existing-skill
 `scripts/`, `assets/` and bundled LICENSE/NOTICE material. It does not execute
 source files or modify the source directory. It reuses source metadata where it
 is trustworthy, asks only for missing values, and always changes the imported
-Skill Card lifecycle to `staging`. It is a one-time local copy, not upstream
+Skill Card lifecycle to `published`. It is a one-time local copy, not upstream
 synchronization.
 
 The category must match [the taxonomy](../governance/taxonomy.md) exactly; a
@@ -58,12 +58,12 @@ This is the only step no helper can do for the author.
   or below 500 lines and move detail into `references/`.
 - **Bundled files** -- copy any `scripts/`, `references/` or `assets/` the skill
   needs into the skill directory. Everything it needs must be inside it.
-- **`skill-card.md`** -- replace each `TODO`, then **change `lifecycle: staging`
-  to `published`**. State the validation boundary honestly: what was actually
-  exercised, and what a passing check does not prove.
+- **`skill-card.md`** -- review the generated metadata; lifecycle already defaults
+  to `published`. Runtime requirements and permissions are collected by the command
+  or supplied with `--runtime-permissions`. You may refer to SKILL.md instead of
+  repeating documented requirements. Non-interactive use defaults to that reference.
 
-No separate eval file is needed. Describe what you actually tried, the observed
-results and known limitations in the Skill Card's **Validation** section.
+No separate eval file or Skill Card Validation section is required.
 
 ## 4. Check, then submit
 

@@ -42,7 +42,7 @@ and are not written for one agent.
 ## Add a skill
 
 Create a branch, then use one command to add a local skill. It prompts for
-the owner, description and category, and registers the skill locally. Original
+the owner, description, category, runtime requirements and permissions, and registers the skill locally. Original
 contributions default to the repository's Apache-2.0 license:
 
 ```bash

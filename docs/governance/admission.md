@@ -30,7 +30,7 @@ Before synchronization or publication, record:
   present.
 - `skill-card.md` has schema version 1, matches the component source, and
   identifies owner, license and published lifecycle.
-- The Skill Card describes representative validation and its limitations.
+- The Skill Card records runtime requirements and permissions, or links to them in SKILL.md.
   A separate eval dataset is not required; optional upstream tests may remain.
 - Executable helpers are reviewed and tested on representative input.
 - Secret, license, link, file-size and generated-catalog checks pass.

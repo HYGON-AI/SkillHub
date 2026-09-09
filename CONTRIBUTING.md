@@ -55,9 +55,9 @@ python3 scripts/contribute.py import ../quality-gate-audit
 Then, for either path:
 
 1. Replace the scaffold `TODO` sections in `SKILL.md` and `skill-card.md`.
-   An imported Skill Card is deliberately set to `staging`; preserve upstream
+   An imported Skill Card defaults to `published`; preserve upstream
    attribution and license material and complete any missing local review notes.
-2. Set the Skill Card lifecycle to `published` once the evidence is real.
+2. Review the generated metadata; no manual lifecycle change is needed.
 3. Run all local gates:
 
    ```bash
@@ -147,9 +147,11 @@ mismatches; it does not determine legal terms or compatibility. Reviewers must
 confirm that `--license` matches the copied text and that all NOTICE obligations
 are satisfied.
 
-The generated Skill Card remains `staging` and its author-owned sections contain
-`TODO` markers. Fill in the workflow, permissions, representative validation and
-known limitations, then change the lifecycle to `published`. No eval dataset
+The generated Skill Card defaults to `published`. `contribute.py new` and
+`import` ask for runtime requirements and permissions, or accept
+`--runtime-permissions`; referring to SKILL.md is allowed when it documents them.
+Non-interactive use without this flag records a reference to SKILL.md.
+No Validation section is required or generated. No eval dataset
 is required or generated. Upstream evaluation files may be retained as optional
 resources; this catalog does not execute or impose a dataset schema on them.
 
@@ -180,7 +182,7 @@ discovery.
 - Bundle every required dependency inside the skill directory. Do not depend on sibling skills or source-repository files that an installer will not copy.
 - Add a schema-versioned `skill-card.md` with machine-readable owner, source,
   license and lifecycle frontmatter plus the required human-readable sections.
-- Describe representative validation and known limitations in the Skill Card.
+- Review runtime requirements and permissions in the Skill Card or linked SKILL.md.
 - Use only the standard optional directories `agents/`, `references/`, `scripts/`, and `assets/` unless a documented format requires another path.
 - Put repeatable deterministic operations in tested `scripts/`.
 - Do not include credentials, private endpoints, personal data, generated caches, or unrelated documentation.
@@ -199,8 +201,7 @@ discovery.
 - [ ] The source and catalog licenses are compatible.
 - [ ] The installed skill retains required LICENSE and NOTICE material.
 - [ ] Scripts were reviewed and tested.
-- [ ] `skill-card.md` identifies owner, source, license, lifecycle, runtime permissions, and validation boundary.
-- [ ] The Skill Card states what was actually validated and what remains untested.
+- [ ] `skill-card.md` identifies owner, source, license, lifecycle, and runtime permissions.
 - [ ] The skill contains no nested `SKILL.md` or sibling-skill dependency.
 - [ ] `python3 scripts/validate_skills.py` passes.
 - [ ] `python3 scripts/validate_agent_skills_spec.py` passes against the pinned reference implementation.

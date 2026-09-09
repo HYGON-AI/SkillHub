@@ -87,7 +87,6 @@ REQUIRED_SKILL_CARD_HEADINGS = (
     "Source",
     "License",
     "Runtime and permissions",
-    "Validation",
 )
 ALLOWED_SKILL_CARD_FIELDS = frozenset((
     "schema_version", "owner", "source", "license", "lifecycle",

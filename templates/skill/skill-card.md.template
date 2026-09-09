@@ -32,8 +32,3 @@ Replace with the SPDX identifier and required attribution files.
 
 List required operating systems, hardware, network access, tools and write
 surfaces. State `none` explicitly where appropriate.
-
-## Validation
-
-Describe the last representative validation environment without turning a
-partial or synthetic result into a production claim.

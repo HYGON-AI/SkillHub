@@ -187,17 +187,18 @@ def render_card(source, frontmatter, config, upstream):
     )
     data = dict(original)
     data.setdefault("schema_version", 1)
-    data.update(owner=config.owner, license=config.license_id, lifecycle="staging")
+    data.update(owner=config.owner, license=config.license_id, lifecycle="published")
     data["source"] = {"repo": config.repo, "path": config.source_path}
     sections = {
         "Summary": config.description,
         "Owner": config.owner,
         "Source": f"Locally maintained at `{config.repo}`, path `{config.source_path}`.",
         "License": f"Declared as `{config.license_id}`; see original source licensing and any preserved LICENSE/NOTICE material. Import does not relicense this content.",
-        "Runtime and permissions": frontmatter.get("compatibility") or "TODO: Record runtime requirements and permissions.",
-        "Validation": "TODO: Record representative validation and known limitations; importing files is not a behavior test.",
+        "Runtime and permissions": config.runtime_permissions,
     }
     for title, content in sections.items():
+        if title == "Runtime and permissions":
+            body = re.sub(r"^## Runtime and permissions\s*\n.*?(?=^## |\Z)", "", body, flags=re.MULTILINE | re.DOTALL)
         if not re.search(rf"^## {re.escape(title)}\s*$", body, re.MULTILINE):
             body += f"\n\n## {title}\n\n{content}\n"
     body += (
@@ -214,8 +215,6 @@ def render_card(source, frontmatter, config, upstream):
         body += f"\nOriginal Skill Card owner: {original['owner']}\n"
     if upstream:
         body += f"\nAdditional origin or attribution: {upstream}\n"
-    elif not original.get("source"):
-        body += "\nTODO: Record the original repository URL or another publishable origin or attribution.\n"
     return "---\n" + yaml.safe_dump(data, allow_unicode=True, sort_keys=False) + "---\n" + body
 
 
@@ -314,6 +313,13 @@ def import_local_skill(args, root, prompt):
     license_file = select_material(source, args.license_file, "LICENSE")
     upstream = args.upstream
     notice_file = select_material(source, args.notice_file, "NOTICE")
+    runtime_permissions = value_or_prompt(
+        args.runtime_permissions or (
+            "See [SKILL.md](SKILL.md) for runtime requirements and permissions."
+            if args.non_interactive else None
+        ),
+        "--runtime-permissions", "Runtime requirements and permissions (or enter: see SKILL.md)", args, prompt,
+    )
     config = generator.ScaffoldConfig(
         name=name,
         repo=catalog.CATALOG_REPO,
@@ -330,6 +336,7 @@ def import_local_skill(args, root, prompt):
         catalog_root=root,
         license_file=license_file,
         notice_file=notice_file,
+        runtime_permissions=runtime_permissions,
     )
     generator.validate_config(config)
     before = registry_snapshot(root)
@@ -345,7 +352,7 @@ def import_local_skill(args, root, prompt):
             "WARNING: translated non-portable source frontmatter into "
             "'Imported source metadata': " + ", ".join(source_only)
         )
-    print("Preserve SKILL.md and resources. Adapt or generate the Skill Card as staging; retain upstream attribution.")
+    print("Preserve SKILL.md and resources. Generate the Skill Card as published; retain existing attribution.")
     print("Review redistribution rights and any repository-level LICENSE or NOTICE before publishing.")
     with tempfile.TemporaryDirectory(prefix=".import-skill-", dir=root) as temporary:
         stage_root = Path(temporary)
@@ -378,6 +385,6 @@ def import_local_skill(args, root, prompt):
                 shutil.rmtree(destination)
             raise
     print(f"Imported {name} and updated {component_path}. Source directory was not changed.")
-    print(f"NEXT: review skills/{name}/skill-card.md, complete remaining TODOs, then set lifecycle to published.")
+    print(f"NEXT: review skills/{name}/skill-card.md; lifecycle is already published. Run checks before submitting.")
     print("NEXT: run python scripts/contribute.py check; commit and open a PR yourself. No submission was performed.")
     return 0

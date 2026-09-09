@@ -87,6 +87,7 @@ class ScaffoldConfig:
     with_openai: bool = False
     with_references: bool = False
     dry_run: bool = False
+    runtime_permissions: str = "See [SKILL.md](SKILL.md) for runtime requirements and permissions."
 
     @property
     def source_path(self):
@@ -274,17 +275,15 @@ def render_skill_card(config, template_root):
         "Replace with the SPDX identifier.": json.dumps(
             config.license_id, ensure_ascii=False
         ),
-        "lifecycle: published": "lifecycle: staging",
         "Replace with one sentence describing the skill's outcome.": config.description,
-        "Replace with the maintaining team and maintainer contact mechanism.": f"TODO: Add the maintained contact mechanism for {config.owner}.",
-        "- Lifecycle: `staging` or `published`": "- Lifecycle: `staging`",
+        "Replace with the maintaining team and maintainer contact mechanism.": config.owner,
+        "- Lifecycle: `staging` or `published`": "- Lifecycle: `published`",
         "Replace with the SPDX identifier and required attribution files.": (
             f"Declared as `{config.license_id}`; see the bundled `LICENSE` and any bundled `NOTICE`."
             if config.license_file else
             f"Original contribution under `{config.license_id}`; see https://github.com/{config.repo}/blob/{config.ref}/LICENSE. Preserve any applicable attribution and NOTICE."
         ),
-        "List required operating systems, hardware, network access, tools and write\nsurfaces. State `none` explicitly where appropriate.": "TODO: List required operating systems, hardware, network access, tools, and write surfaces.",
-        "Describe the last representative validation environment without turning a\npartial or synthetic result into a production claim.": "TODO: Describe representative validation evidence and its limitations.",
+        "List required operating systems, hardware, network access, tools and write\nsurfaces. State `none` explicitly where appropriate.": config.runtime_permissions,
     }
     for old, new in replacements.items():
         text = text.replace(old, new)
@@ -515,7 +514,7 @@ def create_scaffold(config, template_root=TEMPLATE_ROOT):
         "NEXT: verify --license matches the copied license text and NOTICE obligations."
     )
     print(
-        "NEXT: replace every TODO and set skill-card lifecycle to published after review."
+        "NEXT: complete the skill instructions and review the generated Skill Card; lifecycle is already published."
     )
     if config.local:
         print("NEXT: generate the catalog, validate, and submit one SkillHub pull request.")

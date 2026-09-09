@@ -21,7 +21,7 @@ caches, oversized packages and invalid required portable fields. Source-only
 frontmatter such as `produces` is retained in an **Imported source metadata**
 section of the copied `SKILL.md`, rather than left as an invalid top-level Agent
 Skills field. An existing Skill Card is retained as context but adapted to local
-identity with lifecycle `staging`; upstream attribution remains in the card.
+identity with lifecycle `published`; upstream attribution remains in the card.
 
 If the package does not include license text, no duplicate file is required.
 Local directory imports are intended for your own original contributions. When
@@ -32,8 +32,7 @@ overwritten. `--upstream <url>` is optional. This default is not permission to
 relicense third-party content. Use `--license-file <path>`
 or `--notice-file <path>` when redistribution requires additional license or
 notice material. Existing bundled files are always preserved.
-Review redistribution rights, complete remaining Skill Card TODOs, set
-the lifecycle to `published`, and run:
+Review redistribution rights and the generated Skill Card, then run:
 
 ```bash
 python3 scripts/contribute.py check

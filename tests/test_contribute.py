@@ -73,12 +73,16 @@ class ContributionTests(unittest.TestCase):
                 "Tool Team",
                 "Analyze tool logs when an operator needs a diagnosis.",
                 "Developer Tools",
+                "Python 3.11; read logs and write reports.",
             ]
             with mock.patch("builtins.input", side_effect=answers):
                 code, output = self.invoke(["new", "tool-log-analysis"], root)
             self.assertEqual(code, 0, output)
             card = (root / "skills" / "tool-log-analysis" / "skill-card.md").read_text(encoding="utf-8")
-            self.assertIn("lifecycle: staging", card)
+            self.assertIn("lifecycle: published", card)
+            self.assertIn("Python 3.11; read logs and write reports.", card)
+            self.assertNotIn("## Validation", card)
+            self.assertNotIn("TODO", card)
             self.assertIn("Apache-2.0", card)
             self.assertFalse((root / "skills" / "tool-log-analysis" / "LICENSE").exists())
             self.assertTrue((root / "skills" / "tool-log-analysis" / "NOTICE").exists())
@@ -111,7 +115,9 @@ class ContributionTests(unittest.TestCase):
                 b"source resource\n",
             )
             card = (destination / "skill-card.md").read_text(encoding="utf-8")
-            self.assertIn("lifecycle: staging", card)
+            self.assertIn("lifecycle: published", card)
+            self.assertNotIn("## Validation", card)
+            self.assertNotIn("TODO", card)
             self.assertIn("Local catalog import", card)
             registry = yaml.safe_load((root / "components.d" / "skillhub.yml").read_text(encoding="utf-8"))
             self.assertEqual(registry["skills"][0]["catalog_dir"], "imported-example")
@@ -132,6 +138,21 @@ class ContributionTests(unittest.TestCase):
             self.assertIn("## Imported source metadata", document)
             self.assertIn("produces:", document)
             self.assertIn("translated non-portable", output)
+
+    def test_import_records_runtime_option_without_placeholders(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = self.fixture(temporary)
+            source = self.source_skill(temporary)
+            code, output = self.invoke([
+                "import", str(source), "--category", "Developer Tools", "--non-interactive",
+                "--runtime-permissions", "HCU and hipprof; read traces and write reports.",
+            ], root)
+            self.assertEqual(code, 0, output)
+            card = (root / "skills" / "imported-example" / "skill-card.md").read_text(encoding="utf-8")
+            self.assertIn("HCU and hipprof; read traces and write reports.", card)
+            self.assertNotIn("TODO", card)
+            self.assertNotIn("## Validation", card)
+            self.assertIn("lifecycle: published", card)
 
     def test_import_dry_run_without_license_leaves_catalog_unchanged(self):
         with tempfile.TemporaryDirectory() as temporary:
