@@ -1,6 +1,6 @@
 ---
 schema_version: 1
-owner: Replace with the owning HYGON-AI team.
+owner: Replace with the original author or maintaining team.
 source:
   repo: HYGON-AI/replace-me
   path: skills/replace-me
@@ -16,7 +16,7 @@ Replace with one sentence describing the skill's outcome.
 
 ## Owner
 
-Replace with the owning HYGON-AI team and maintainer contact mechanism.
+Replace with the maintaining team and maintainer contact mechanism.
 
 ## Source
 

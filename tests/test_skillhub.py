@@ -129,9 +129,27 @@ class ComponentOwnerTests(unittest.TestCase):
                 "Accuracy and Debugging",
             )
 
-    def test_rejects_third_party_repository(self):
-        with self.assertRaisesRegex(CatalogError, "repo must be owned by HYGON-AI"):
-            self.load_repo("third-party/example")
+    def test_accepts_third_party_repository(self):
+        for repo in ("third-party/example", "someone/tool-skills", "team/.github"):
+            with self.subTest(repo=repo):
+                self.assertEqual(self.load_repo(repo)[0]["repo"], repo)
+
+    def test_rejects_repository_urls_and_escaping_paths(self):
+        for repo in ("https://github.com/team/repo", "../repo", "team/..",
+                     "-team/repo", "team/repo/extra", '"team/repo\\n"'):
+            with self.subTest(repo=repo), self.assertRaises(CatalogError):
+                self.load_repo(repo)
+
+    def test_rejects_case_variant_duplicate_repositories(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            (root / "components.d").mkdir()
+            (root / "components.d" / "one.yml").write_text(COMPONENT.format(repo="Someone/Tools"))
+            (root / "components.d" / "two.yml").write_text(
+                COMPONENT.format(repo="someone/tools").replace("name: Example", "name: Other")
+            )
+            with self.assertRaisesRegex(CatalogError, "registered more than once"):
+                load_components(root)
 
     def test_rejects_source_path_that_can_be_parsed_as_a_git_option(self):
         with tempfile.TemporaryDirectory() as temp:
@@ -496,6 +514,19 @@ class LockFileTests(unittest.TestCase):
 
 
 class AdmissionExceptionTests(unittest.TestCase):
+    def test_accepts_external_exception_without_waiving_admission(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            (root / "admission-exceptions.yml").write_text(
+                "schema_version: 1\nexceptions:\n  - repo: someone/tool-skills\n"
+                "    path: skills/example\n    reasons:\n      - Missing evals.\n",
+                encoding="utf-8",
+            )
+            self.assertEqual(validate_admission_exceptions([], root), [])
+            components = [{"repo": "someone/tool-skills", "skills": [{"path": "skills/example"}]}]
+            self.assertTrue(any("cannot also be registered" in error
+                                for error in validate_admission_exceptions(components, root)))
+
     def test_rejects_exception_that_is_also_registered(self):
         with tempfile.TemporaryDirectory() as temp:
             root = Path(temp)

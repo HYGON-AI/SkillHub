@@ -21,7 +21,7 @@ present local review as remote provenance.
 
 ## Remote components (explicit opt-in)
 
-When a product team owns a skill in its own HYGON-AI repository, this
+When a maintained skill is imported from any GitHub repository, this
 additional evidence applies:
 
 - Component definitions record repository, ref and source path.
@@ -54,6 +54,20 @@ defines:
 4. verification in pull requests and release builds;
 5. key rotation, revocation, incident response, and historical verification.
 
-Until that profile exists, source commit and content digest checks are the
-enforced integrity mechanism. Documentation must not describe unsigned content
+Until that profile exists, remote source commit and content digest checks prove
+byte consistency, not author identity or content safety. Documentation must not describe unsigned content
 as signed or verified.
+
+## External import trust boundary
+
+Treat fetched files as untrusted data. Never execute imported helpers or install
+their dependencies during synchronization. Preserve original attribution and
+redistribution rights. Run the pinned Quality Gate on the SkillHub PR, together
+with catalog validation and DCO, before reviewed merge. The quality runner must
+be isolated and disposable, with no production credentials or workloads; prepare
+the scanner images before accepting PR jobs. PR jobs receive no sync secrets.
+
+Use a catalog-scoped GitHub App token to push synchronization branches and open
+PRs so `pull_request` checks actually start. A missing App configuration fails
+the sync workflow rather than creating an unchecked bot PR. Configure required
+checks in branch protection; workflow files alone do not enforce merge policy.

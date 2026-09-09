@@ -20,7 +20,6 @@ try:
         CATALOG_REPO,
         FORBIDDEN_GENERIC_CATALOG_DIRS,
         MAX_DESCRIPTION_LENGTH,
-        OFFICIAL_GITHUB_OWNER,
         REF_RE,
         REPO_RE,
         SKILL_NAME_RE,
@@ -31,7 +30,6 @@ except ModuleNotFoundError:  # Direct execution adds scripts/, not the repositor
         CATALOG_REPO,
         FORBIDDEN_GENERIC_CATALOG_DIRS,
         MAX_DESCRIPTION_LENGTH,
-        OFFICIAL_GITHUB_OWNER,
         REF_RE,
         REPO_RE,
         SKILL_NAME_RE,
@@ -155,13 +153,10 @@ def validate_config(config):
         raise ScaffoldError(
             "component must be lowercase hyphen-case and at most 64 characters"
         )
-    if (
-        not REPO_RE.fullmatch(config.repo)
-        or config.repo.split("/", 1)[0] != OFFICIAL_GITHUB_OWNER
-    ):
-        raise ScaffoldError(
-            f"repo must be owned by {OFFICIAL_GITHUB_OWNER} and use owner/name form"
-        )
+    if not REPO_RE.fullmatch(config.repo):
+        raise ScaffoldError("repo must use GitHub owner/name form")
+    if config.local and config.repo != CATALOG_REPO:
+        raise ScaffoldError(f"local repo must equal {CATALOG_REPO}")
     if not REF_RE.fullmatch(config.ref) or config.ref.startswith("-"):
         raise ScaffoldError("ref must be a safe branch or release-tag name")
     if config.category not in ALLOWED_CATEGORIES:
@@ -245,7 +240,7 @@ def render_skill(config, template_root):
         "Replace with an SPDX identifier or a reference to the bundled LICENSE file.": json.dumps(
             config.license_id, ensure_ascii=False
         ),
-        "Replace with the owning HYGON-AI team.": json.dumps(
+        "Replace with the original author or maintaining team.": json.dumps(
             config.owner, ensure_ascii=False
         ),
         "# Replace with skill title": f"# {display_name(config.name)}",
@@ -269,7 +264,7 @@ def render_skill(config, template_root):
 def render_skill_card(config, template_root):
     text = read_template(template_root, "skill-card.md.template")
     replacements = {
-        "Replace with the owning HYGON-AI team.": json.dumps(
+        "Replace with the original author or maintaining team.": json.dumps(
             config.owner, ensure_ascii=False
         ),
         "HYGON-AI/replace-me": config.repo,
@@ -279,7 +274,7 @@ def render_skill_card(config, template_root):
         ),
         "lifecycle: published": "lifecycle: staging",
         "Replace with one sentence describing the skill's outcome.": config.description,
-        "Replace with the owning HYGON-AI team and maintainer contact mechanism.": f"TODO: Add the maintained contact mechanism for {config.owner}.",
+        "Replace with the maintaining team and maintainer contact mechanism.": f"TODO: Add the maintained contact mechanism for {config.owner}.",
         "- Lifecycle: `staging` or `published`": "- Lifecycle: `staging`",
         "Replace with the SPDX identifier and required attribution files.": f"Declared as `{config.license_id}`; see the bundled `LICENSE` and any bundled `NOTICE`.",
         "List required operating systems, hardware, network access, tools and write\nsurfaces. State `none` explicitly where appropriate.": "TODO: List required operating systems, hardware, network access, tools, and write surfaces.",
@@ -553,7 +548,7 @@ def parse_args(argv=None):
     )
     parser.add_argument(
         "--repo",
-        help="opt in to a remote HYGON-AI source repository in owner/name form",
+        help="opt in to a remote GitHub source repository in owner/name form",
     )
     parser.add_argument(
         "--owner", required=True, help="owning team recorded in Skill metadata"

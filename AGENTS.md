@@ -3,8 +3,9 @@
 - Default to a local skill: create it under `skills/<name>/` here and register it
   with `local: true`. A local component may omit `repo`; when present it must
   equal `HYGON-AI/skillhub`, and its source path must equal `skills/<name>`.
-- Treat a remote component as an explicit opt-in for product teams that own a
-  skill in their own HYGON-AI repository. It requires `repo` and is mirrored by
+- Treat a remote component as an explicit opt-in for a maintained skill in any
+  GitHub owner/repository. Preserve upstream authorship and redistribution rights.
+  It requires `repo` and is mirrored by
   synchronization, never by hand.
 - Prefer `python3 scripts/new_skill.py <name>` for the mechanical scaffold; it
   creates a local skill unless `--repo` opts into a remote source.

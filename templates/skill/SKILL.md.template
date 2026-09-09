@@ -4,7 +4,7 @@ description: State what the skill does, when it should trigger, and the nearest 
 license: Replace with an SPDX identifier or a reference to the bundled LICENSE file.
 compatibility: Remove this field when there are no specific environment requirements; otherwise keep it at or below 500 characters.
 metadata:
-  author: Replace with the owning HYGON-AI team.
+  author: Replace with the original author or maintaining team.
   version: "0.1.0"
 # allowed-tools is experimental. If needed, use one space-separated string.
 # allowed-tools: Read Bash(git:*)

@@ -1,7 +1,7 @@
 # Component registry
 
 Each YAML file registers one component: either skills owned by this repository
-(the default) or skills mirrored from one HYGON-AI product repository. One file
+(the default) or skills mirrored from one GitHub repository. One file
 per team avoids a shared manifest conflict.
 
 Required fields are `name`, `description`, and a non-empty `skills` list. Each
@@ -28,15 +28,17 @@ Local entries are validated in place, are never cloned, and have no
 
 ## Remote component (explicit opt-in)
 
-Omit `local` (or set it to `false`) and provide `repo`, which must be owned by
-[`HYGON-AI`](https://github.com/HYGON-AI). `ref` defaults to `main`. A remote
+Omit `local` (or set it to `false`) and provide `repo` in GitHub `owner/name`
+form. Personal and third-party organization repositories are accepted.
+`ref` defaults to `main`. A remote
 repository can be registered by exactly one component, and every skill in that
 component is synchronized from the same ref; multiple refs for one repository
 and skill-level ref overrides are not supported.
 
-Remote entries are mirrored by `scripts/sync_sources.py`. Unchanged
-third-party or upstream skills are not eligible for publication as HYGON-AI
-skills. Start from
+Remote entries are mirrored by `scripts/sync_sources.py`. Third-party skills
+must retain their real source, original authors, license and required NOTICE;
+catalog inclusion does not make them HYGON-authored. Assign a catalog maintainer
+and require quality checks and review on the import PR. Start from
 [`templates/component.yml.template`](../templates/component.yml.template),
 which is the optional remote form.
 

@@ -2,7 +2,7 @@
 name: skillhub-contributor
 description: Create, review, and onboard portable Agent Skills into Hygon SkillHub. Use when adding a new SKILL.md to the catalog, registering a local or remote component in components.d, preparing a SkillHub contribution, or diagnosing catalog validation and synchronization failures.
 license: Apache-2.0
-compatibility: Requires Python 3.11+ and Git. Network access is needed only when resolving or synchronizing an opt-in remote HYGON-AI repository.
+compatibility: Requires Python 3.11+ and Git. Network access is needed for reference checks or synchronizing an opt-in remote GitHub repository.
 metadata:
   author: HYGON-AI
   version: "1.2.0"
@@ -11,8 +11,8 @@ metadata:
 # Contribute to Hygon SkillHub
 
 A skill is local by default: it lives in this catalog and ships in one pull
-request. Mirroring from a product repository is an explicit opt-in for teams
-that want a skill to evolve alongside the code it documents; never hand-edit a
+request. Mirroring from any GitHub repository is an explicit opt-in for maintained
+upstream skills; preserve their original authorship and licenses. Never hand-edit a
 mirrored skill.
 
 ## Prerequisite
@@ -28,13 +28,13 @@ product repository or inside this installed skill.
   is content to maintain it here. Register with `local: true`; `repo` may be
   omitted and normalizes to `HYGON-AI/skillhub`. The source path must equal
   `skills/<catalog_dir>`.
-- **Remote (opt-in).** A product team owns the skill in its own HYGON-AI
+- **Remote (opt-in).** A maintained skill is sourced from any GitHub
   repository. Register `repo` and `ref`, and let synchronization mirror it.
 
 ## Workflow
 
 1. Confirm the owning team, the mode, license, and intended user prompts.
-2. Prefer `python3 scripts/new_skill.py --help` from the SkillHub checkout. Without `--repo` it creates a local skill; `--repo` opts into a remote source. It creates final filenames, fills deterministic identity fields, copies the license and NOTICE, and prepares the component registration. Use `templates/skill/` only as the manual fallback.
+2. For a new skill, use `python3 scripts/new_skill.py --help` from the SkillHub checkout. Without `--repo` it creates a local skill; `--repo` authors a new package in a separate source checkout. For an existing upstream skill, register its real repository/path directly without scaffolding over it; confirm its card, evals and license already meet admission requirements.
 3. Use lowercase letters, digits, and hyphens for the directory and frontmatter `name`, and keep the name globally descriptive.
 4. Keep `SKILL.md` focused on procedures the agent cannot infer. Put detailed knowledge in `references/`, deterministic helpers in `scripts/`, and output material in `assets/`. Do not nest another `SKILL.md`.
 5. Replace every `TODO` in `SKILL.md`, `skill-card.md` and `evals/evals.json`, then set the Skill Card lifecycle to `published`.
@@ -45,7 +45,7 @@ product repository or inside this installed skill.
    discovery commands both list exactly the registered published skills. A
    catalog-owned staging entrypoint must remain `SKILL.md.candidate` until
    promotion.
-10. A local skill lands in one pull request. For a remote component, submit the product-repository change first, then the SkillHub registration or sync change.
+10. A local skill lands in one pull request. An existing publishable remote skill also needs only one SkillHub PR containing registration, mirror and lock. Change upstream first only if the source package needs work. Require Quality Gate, catalog validation, DCO and maintainer review before merge.
 
 Read [onboarding.md](references/onboarding.md) for the component schema, release checklist, and troubleshooting commands.
 

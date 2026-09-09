@@ -4,9 +4,10 @@ Describe the skill, owning product, source repository, and intended user prompts
 
 ## Publication checks
 
-- [ ] Every registered source-of-truth repository is owned by [`HYGON-AI`](https://github.com/HYGON-AI).
-- [ ] Each skill is HYGON-authored or includes substantive, tested HCU adaptations.
-- [ ] A HYGON team owns ongoing maintenance and approved public release.
+- [ ] Every skill records its real source repository and original authorship.
+- [ ] Any adaptations are described accurately; third-party sources are allowed.
+- [ ] A catalog maintainer owns ongoing review and approved public release.
+- [ ] Quality Gate, catalog checks and DCO pass on this PR before merge.
 - [ ] Third-party attribution, license, and NOTICE requirements are preserved.
 - [ ] The source license permits redistribution.
 - [ ] The installed directory retains required LICENSE and NOTICE material.

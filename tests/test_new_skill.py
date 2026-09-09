@@ -249,19 +249,30 @@ class NewSkillTests(unittest.TestCase):
                 (catalog_root / "components.d" / "quality-gate.yml").exists()
             )
 
-    def test_rejects_unknown_category_and_third_party_repo(self):
+    def test_rejects_unknown_category_and_malformed_repo(self):
         with tempfile.TemporaryDirectory() as temp:
             source_root, catalog_root = self.make_roots(temp)
             with self.assertRaisesRegex(ScaffoldError, "category must be one of"):
                 self.create(
                     self.make_config(source_root, catalog_root, category="Made Up"),
                 )
-            with self.assertRaisesRegex(ScaffoldError, "repo must be owned"):
+            with self.assertRaisesRegex(ScaffoldError, "owner/name"):
                 self.create(
                     self.make_config(
-                        source_root, catalog_root, repo="third-party/example"
+                        source_root, catalog_root, repo="https://github.com/third-party/example"
                     ),
                 )
+
+    def test_accepts_third_party_repo_and_preserves_source(self):
+        with tempfile.TemporaryDirectory() as temp:
+            source_root, catalog_root = self.make_roots(temp)
+            config = self.make_config(source_root, catalog_root, repo="someone/tool-skills")
+            self.create(config)
+            component = yaml.safe_load(
+                (catalog_root / "components.d" / "quality-gate.yml").read_text(encoding="utf-8")
+            )
+            self.assertEqual(component["repo"], "someone/tool-skills")
+            self.assertIn("someone/tool-skills", (config.destination / "skill-card.md").read_text(encoding="utf-8"))
 
     def test_dry_run_does_not_write(self):
         with tempfile.TemporaryDirectory() as temp:

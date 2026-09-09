@@ -14,14 +14,16 @@ For the step-by-step contributor path, see
 
 ## Remote product skill (opt-in)
 
-1. Merge the self-contained skill in the owning HYGON-AI product repository.
+1. Select a self-contained skill on a maintained ref in any GitHub repository.
 2. Add or update `components.d/<component>.yml` in this repository.
 3. Preview synchronization and review the resolved repository, ref, source
    path and catalog destination.
 4. Apply synchronization, regenerate metadata, and run all catalog checks.
-5. Merge through a protected pull request with the product owner reviewing.
+5. Pass Quality Gate, catalog checks and DCO, then merge a protected pull
+   request with the catalog maintainer reviewing.
 6. Verify discovery from the published repository before announcing release.
 
+For an existing third-party package, follow [Import external skills](external-skills.md).
 Synchronization runs on manual dispatch only. Admitting the first remote
 component requires an explicit decision on whether to restore scheduled
 synchronization and at what frequency.

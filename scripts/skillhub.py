@@ -18,7 +18,7 @@ CATALOG_REPO = OFFICIAL_GITHUB_OWNER + "/skillhub"
 CATALOG_REF = "main"
 SKILL_NAME_RE = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
 EVAL_ID_RE = SKILL_NAME_RE
-REPO_RE = re.compile(r"^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$")
+REPO_RE = re.compile(r"^[A-Za-z0-9](?:[A-Za-z0-9-]*[A-Za-z0-9])?/(?!\.{1,2}$)[A-Za-z0-9_.-]+$")
 REF_RE = re.compile(r"^[A-Za-z0-9._/-]+$")
 COMMIT_RE = re.compile(r"^[0-9a-f]{40}$")
 DIGEST_RE = re.compile(r"^[0-9a-f]{64}$")
@@ -217,14 +217,10 @@ def load_components(root=ROOT):
                 raise CatalogError("{}: remote component requires repo".format(path.relative_to(root)))
             if not isinstance(repo, str) or not REPO_RE.fullmatch(repo):
                 raise CatalogError("{}: repo must use owner/name form".format(path.relative_to(root)))
-            owner, _ = repo.split("/", 1)
-            if owner != OFFICIAL_GITHUB_OWNER:
-                raise CatalogError("{}: repo must be owned by {}".format(
-                    path.relative_to(root), OFFICIAL_GITHUB_OWNER))
-            if repo in seen_remote_repositories:
+            if repo.casefold() in seen_remote_repositories:
                 raise CatalogError("{}: remote repository '{}' is registered more than once".format(
                     path.relative_to(root), repo))
-            seen_remote_repositories.add(repo)
+            seen_remote_repositories.add(repo.casefold())
         ref = data.get("ref", CATALOG_REF)
         if (
                 not isinstance(ref, str)
@@ -685,8 +681,8 @@ def validate_admission_exceptions(components, root=ROOT):
             errors.append("{}: unsupported fields: {}".format(
                 label, ", ".join(extra_fields)))
         repo = exception.get("repo")
-        if not isinstance(repo, str) or not REPO_RE.fullmatch(repo) or not repo.startswith(OFFICIAL_GITHUB_OWNER + "/"):
-            errors.append("{}: repo must use HYGON-AI/name form".format(label))
+        if not isinstance(repo, str) or not REPO_RE.fullmatch(repo):
+            errors.append("{}: repo must use GitHub owner/name form".format(label))
         try:
             source_path = safe_relative_path(
                 exception.get("path"), "{}.path".format(label))

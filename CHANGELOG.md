@@ -21,6 +21,14 @@ here. Generated skill synchronization updates may be grouped by release.
 
 ### Changed
 
+- Remote components, scaffolds and admission exceptions accept any GitHub
+  owner/repository. Local identity and all package/provenance gates remain enforced.
+- External imports preserve upstream authorship and licensing and require a
+  catalog maintainer; original content need not be relabeled as an HCU adaptation.
+- PRs call the pinned HYGON Quality Gate. Automatic sync uses a catalog-scoped
+  GitHub App token so bot PRs trigger checks; App credentials, an isolated quality
+  runner and required branch checks must be configured before production use.
+
 - Catalog categories now use an enforced allowlist, primary-output
   classification rules and explicit inclusion/exclusion boundaries; accuracy
   and correctness debugging have a dedicated category.

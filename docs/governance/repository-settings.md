@@ -12,6 +12,8 @@ Protect `main` with a branch ruleset or branch protection rule that:
 - requires CODEOWNERS review for owned paths and dismisses stale approvals;
 - requires `validate (3.11)`, `validate (3.12)`, and `dco` to pass on the
   latest commit;
+- requires the pinned Quality Gate's `All required checks` result on that
+  same PR revision (select its actual emitted check name after the first run);
 - requires conversation resolution and a current branch before merge;
 - blocks force pushes and branch deletion; and
 - applies to administrators and automation unless a narrowly scoped, audited
@@ -36,6 +38,30 @@ job.
   scope it to read source repositories and never expose it to fork workflows.
 
 ## Release verification
+
+### External import automation setup
+
+1. Install a GitHub App on this catalog only, with Contents and Pull requests
+   read/write permissions. Set repository variable `SKILLHUB_APP_ID` and secret
+   `SKILLHUB_APP_PRIVATE_KEY`. The sync workflow creates a short-lived token;
+   it deliberately does not fall back to `GITHUB_TOKEN` for pushing/opening PRs,
+   because those events would not normally trigger PR checks.
+2. Keep optional `SKILLHUB_SYNC_TOKEN` limited to reading private sources.
+   Public sources do not need it. PR quality jobs must not receive these secrets.
+3. Provide a disposable, isolated Linux x64 runner labeled `quality`, with
+   Python/PyYAML, Docker and the scanner images required by the pinned
+   [Quality Gate](https://github.com/HYGON-AI/quality-gate/tree/2ba24f43aa792b744cf6d9c5b8839fb8856e278c).
+   The engine refuses to pull missing images during PR scanning. Never share
+   this runner with production jobs or leave credentials on it between runs.
+4. Run a representative import PR and inspect all three quality groups. Verify
+   imported copyright and license notices are preserved; findings require review
+   or a reviewed gate policy change, not removal of upstream attribution.
+5. Make the quality result, catalog checks and DCO required in branch protection,
+   and verify a failed check blocks merge and an App-authored PR triggers checks.
+
+These are deployment prerequisites, not settings enabled by committing YAML.
+
+### Acceptance evidence
 
 Before announcing the catalog endpoint, an administrator records evidence that:
 

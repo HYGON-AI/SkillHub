@@ -43,7 +43,7 @@ skills:
 `repo` may be omitted and normalizes to `HYGON-AI/skillhub`; any other value is
 rejected, and `path` must equal `skills/<catalog_dir>`.
 
-A remote component is the explicit opt-in for a skill owned by a product
+A remote component is the explicit opt-in for a skill maintained by an upstream
 repository:
 
 ```yaml

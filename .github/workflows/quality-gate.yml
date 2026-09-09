@@ -1,0 +1,16 @@
+# Copyright (c) 2026 Hygon Information Technology Co., Ltd.
+# SPDX-License-Identifier: Apache-2.0
+name: Quality Gate
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+
+permissions:
+  contents: read
+
+jobs:
+  checks:
+    uses: HYGON-AI/quality-gate/.github/workflows/pr-quality-gate.yml@2ba24f43aa792b744cf6d9c5b8839fb8856e278c
+    with:
+      runner_labels: '["self-hosted","linux","x64","quality"]'

@@ -9,7 +9,7 @@ documents.
 
 - A local skill is written under `skills/<skill-name>/` here and registered with
   `local: true`. This is the default.
-- A remote product candidate remains in its HYGON-AI product repository until admission.
+- A remote candidate remains in its source GitHub repository until admission.
 - Catalog-owned prototypes may use `staging/<skill-name>/SKILL.md.candidate`;
   a real `SKILL.md` is forbidden anywhere below `staging/` so deep discovery
   cannot expose candidates.
@@ -29,9 +29,9 @@ administrators must apply and verify the
 
 ## Publication boundary
 
-SkillHub publishes skills whose source-of-truth repository is owned by the [`HYGON-AI` GitHub organization](https://github.com/HYGON-AI). Organization ownership alone is not sufficient: each published skill must be either HYGON-authored or substantively adapted and validated for HCU, with a HYGON team responsible for ongoing maintenance.
+SkillHub accepts maintained skills from any GitHub organization or personal repository. Every imported skill needs a catalog maintainer, permission for public redistribution, accurate source metadata and the same quality gates as local skills.
 
-Do not register or mirror an unchanged third-party or upstream skill as a HYGON-AI skill. Link to the canonical upstream skill instead, then request catalog admission after the product team has added and tested the HCU-specific workflow. Preserve all applicable third-party copyright, license, and NOTICE material in an adapted skill.
+Third-party skills may be mirrored unchanged when their license permits it and their package meets admission requirements. Preserve original authorship, copyright, license and NOTICE; do not present catalog inclusion as HYGON authorship or an HCU adaptation. For an existing upstream skill, follow the [external import guide](docs/publishing/external-skills.md); no upstream PR is needed if the package is already complete.
 
 ## Add a local skill (default)
 
@@ -75,7 +75,7 @@ its integrity rests on review, protected branches, required checks and DCO.
 
 ## Add a remote product skill (opt-in)
 
-Use this only when a product team owns the skill in its own HYGON-AI
+Use this only when a team maintains the skill in a separate GitHub
 repository. Point the generator at that checkout with `--repo`:
 
 ```bash
@@ -175,9 +175,10 @@ discovery.
 
 ## Pull request checklist
 
-- [ ] The source-of-truth repository is owned by [`HYGON-AI`](https://github.com/HYGON-AI).
-- [ ] The skill is HYGON-authored or documents substantive, tested HCU adaptations.
-- [ ] A HYGON team owns ongoing maintenance and approved publication.
+- [ ] The real source repository, ref and source path are recorded.
+- [ ] Original authorship and any adaptations are described accurately.
+- [ ] A catalog maintainer owns ongoing review and approved publication.
+- [ ] The import PR passes Quality Gate, catalog validation and DCO before merge.
 - [ ] Third-party attribution, license, and NOTICE requirements are preserved.
 - [ ] The source and catalog licenses are compatible.
 - [ ] The installed skill retains required LICENSE and NOTICE material.

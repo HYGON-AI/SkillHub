@@ -93,7 +93,11 @@ catalog files. `--signoff` is required; the DCO check fails without it.
 
 ## Remote components (opt-in)
 
-Use this only when a product team owns the skill in its own HYGON-AI
+For an existing third-party Skill, use [Import external skills](external-skills.md):
+register the source and import it in one SkillHub PR. The upstream package must
+already meet the publication contract; do not scaffold over an existing Skill.
+
+Use the following authoring flow when a team maintains the skill in a separate GitHub
 repository and wants it to evolve alongside the code it documents. Everything
 above still applies; the differences are that the skill is authored elsewhere,
 the change lands in two repositories, and the mirror carries provenance.

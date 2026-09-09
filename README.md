@@ -123,7 +123,7 @@ A local skill, which is the default:
 
 A remote component, when a product team opts in:
 
-1. The product team merges the self-contained skill in its own HYGON-AI repository.
+1. Select a self-contained skill from any maintained GitHub repository; see the [external import guide](docs/publishing/external-skills.md).
 2. A `components.d/<component>.yml` file records the repository, ref and source path.
 3. Synchronization mirrors the registered content and records the resolved commit and digest.
 4. The same admission and validation gates apply before the mirror lands.
@@ -168,7 +168,7 @@ a Skill's operational behavior is correct.
 
 ## Source attribution
 
-Product repositories remain the source of truth for mirrored skills. The catalog preserves upstream authorship and license terms, records each source repository, ref, and path in `catalog.json`, and does not treat an unchanged third-party skill as a HYGON-AI adaptation.
+Source repositories remain the source of truth for mirrored skills, including personal and third-party GitHub repositories. The catalog preserves upstream authorship and license terms and records each repository, ref and path in `catalog.json`. Imports require quality checks and maintainer review; inclusion does not imply HYGON authorship or HCU adaptation.
 
 ## License
 

@@ -8,11 +8,12 @@ redistribution rights, and an auditable source.
 
 Before synchronization or publication, record:
 
-1. The HYGON-AI owning team and ongoing maintainer.
+1. The upstream author/owner and the catalog maintainer responsible for review.
 2. Whether the skill is local (this repository, the default) or mirrored from a
    product repository. For a remote component, also record the source
    repository, source path and maintained ref or release tag.
-3. Whether the content is HYGON-authored or a substantive HCU adaptation.
+3. Whether the content is locally authored, an unchanged third-party import,
+   or an adaptation. Any GitHub organization or personal source is eligible.
 4. Applicable license, copyright and NOTICE obligations.
 5. Intended positive prompts and nearby prompts that must not trigger it.
 6. Required tools, network access, hardware and destructive side effects.
@@ -40,7 +41,7 @@ Before synchronization or publication, record:
 - For a remote component, the independently resolved remote tree, recorded
   commit, lock digest and published package are byte-consistent. A local skill
   has no lock entry or digest; its evidence is review, not provenance.
-- Required repository checks and owning-team review pass.
+- Quality Gate, catalog validation, DCO and catalog-maintainer review pass.
 
 ## Staging and exceptions
 
