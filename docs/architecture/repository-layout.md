@@ -55,7 +55,7 @@ skills/<skill-name>/
 ├── references/               # Optional detailed documentation
 ├── scripts/                  # Optional deterministic, tested helpers
 ├── assets/                   # Optional templates and output resources
-├── LICENSE                   # Required; installations do not inherit the repository root license
+├── LICENSE                   # Optional duplicate; retain when required by source licensing
 └── NOTICE                    # Required when the source license requires it
 ```
 

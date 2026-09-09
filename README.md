@@ -42,7 +42,8 @@ and are not written for one agent.
 ## Add a skill
 
 Create a branch, then use one command to add a local skill. It prompts for
-the owner, description, license and category, and registers the skill locally:
+the owner, description and category, and registers the skill locally. Original
+contributions default to the repository's Apache-2.0 license:
 
 ```bash
 python3 scripts/contribute.py new my-skill-name

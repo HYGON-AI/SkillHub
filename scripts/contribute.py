@@ -34,9 +34,9 @@ def parse_args(argv=None):
     new.add_argument("name", help="globally descriptive lowercase-hyphen skill name")
     new.add_argument("--owner", help="original author or maintaining team")
     new.add_argument("--description", help="capability and trigger-boundary description")
-    new.add_argument("--license", help="reviewed SPDX expression; never chosen automatically")
+    new.add_argument("--license", default="Apache-2.0", help="original contributions default to the repository Apache-2.0 license")
     new.add_argument("--category", help="exact category from the taxonomy")
-    new.add_argument("--license-file", help="reviewed license text; defaults to the root LICENSE")
+    new.add_argument("--license-file", help="optional license text to bundle")
     new.add_argument("--notice-file", help="required notice; defaults to an existing root NOTICE")
     new.add_argument("--with-openai", action="store_true", help="create agents/openai.yaml")
     new.add_argument("--with-references", action="store_true", help="create a linked reference scaffold")
@@ -89,13 +89,12 @@ def new_skill(args, root):
     fields = (
         ("owner", "Author or maintaining team"),
         ("description", "What it does and when it should (or should not) trigger"),
-        ("license", "Reviewed SPDX expression (for example Apache-2.0; must match the copied text)"),
         ("category", "Category number or name"),
     )
     missing = [f"--{field}" for field, _ in fields if not getattr(args, field)]
     if missing and args.non_interactive:
         raise ContributionError("Missing required metadata: " + ", ".join(missing))
-    argv = [args.name, "--local", f"--catalog-root={root}"]
+    argv = [args.name, "--local", f"--catalog-root={root}", f"--license={args.license}"]
     for field, label in fields:
         value = getattr(args, field)
         if not value:

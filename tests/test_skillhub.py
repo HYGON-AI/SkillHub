@@ -438,7 +438,7 @@ Validated.
 
 
 class PublicationContractTests(unittest.TestCase):
-    def test_evals_are_not_required_but_card_and_license_still_are(self):
+    def test_license_file_is_optional_but_license_declaration_and_card_are_required(self):
         with tempfile.TemporaryDirectory() as temp:
             root = Path(temp)
             name = "skillhub-contributor"
@@ -459,11 +459,15 @@ class PublicationContractTests(unittest.TestCase):
             (skill / "evals").mkdir(exist_ok=True)
             (skill / "evals" / "evals.json").write_text('{"custom_cases": []}\n')
             self.assertEqual(validate_catalog(root)[0], [])
-            (skill / "skill-card.md").unlink()
             (skill / "LICENSE").unlink()
+            self.assertEqual(validate_catalog(root)[0], [])
+            card = skill / "skill-card.md"
+            original = card.read_text(encoding="utf-8")
+            card.write_text(original.replace("license: Apache-2.0", "license: ''"), encoding="utf-8")
+            self.assertTrue(any("license must be a non-empty string" in error for error in validate_catalog(root)[0]))
+            card.unlink()
             errors = validate_catalog(root)[0]
             self.assertTrue(any("skill-card.md is required" in error for error in errors))
-            self.assertTrue(any("LICENSE file is required" in error for error in errors))
 
 
 class LockFileTests(unittest.TestCase):

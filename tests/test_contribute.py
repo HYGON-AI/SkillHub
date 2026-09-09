@@ -36,7 +36,7 @@ class ContributionTests(unittest.TestCase):
         (root / "admission-exceptions.yml").write_text("schema_version: 1\nexceptions: []\n", encoding="utf-8")
         return root
 
-    def source_skill(self, directory, *, with_license=True):
+    def source_skill(self, directory, *, with_license=True, source_only=False):
         source = Path(directory) / "source-skill"
         (source / "references").mkdir(parents=True)
         (source / "SKILL.md").write_text(
@@ -46,9 +46,10 @@ class ContributionTests(unittest.TestCase):
             "license: Apache-2.0\n"
             "metadata:\n"
             "  author: External Team\n"
-            "---\n\n"
-            "# Imported Example\n\n"
-            "Use the included reference when the logs require detailed interpretation.\n",
+            + ("produces:\n  - profiling report\n" if source_only else "")
+            + "---\n\n"
+            + "# Imported Example\n\n"
+            + "Use the included reference when the logs require detailed interpretation.\n",
             encoding="utf-8",
         )
         (source / "references" / "details.md").write_bytes(b"source resource\n")
@@ -71,7 +72,6 @@ class ContributionTests(unittest.TestCase):
             answers = [
                 "Tool Team",
                 "Analyze tool logs when an operator needs a diagnosis.",
-                "Apache-2.0",
                 "Developer Tools",
             ]
             with mock.patch("builtins.input", side_effect=answers):
@@ -79,6 +79,9 @@ class ContributionTests(unittest.TestCase):
             self.assertEqual(code, 0, output)
             card = (root / "skills" / "tool-log-analysis" / "skill-card.md").read_text(encoding="utf-8")
             self.assertIn("lifecycle: staging", card)
+            self.assertIn("Apache-2.0", card)
+            self.assertFalse((root / "skills" / "tool-log-analysis" / "LICENSE").exists())
+            self.assertTrue((root / "skills" / "tool-log-analysis" / "NOTICE").exists())
             registry = yaml.safe_load((root / "components.d" / "skillhub.yml").read_text(encoding="utf-8"))
             self.assertTrue(registry["local"])
             self.assertIn("contribute.py check tool-log-analysis", output)
@@ -113,6 +116,23 @@ class ContributionTests(unittest.TestCase):
             registry = yaml.safe_load((root / "components.d" / "skillhub.yml").read_text(encoding="utf-8"))
             self.assertEqual(registry["skills"][0]["catalog_dir"], "imported-example")
 
+    def test_import_translates_source_only_frontmatter_without_changing_source(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = self.fixture(temporary)
+            source = self.source_skill(temporary, source_only=True)
+            before = self.snapshot(source)
+            code, output = self.invoke(
+                ["import", str(source), "--category", "Developer Tools", "--non-interactive"], root,
+            )
+            self.assertEqual(code, 0, output)
+            self.assertEqual(before, self.snapshot(source))
+            document = (root / "skills" / "imported-example" / "SKILL.md").read_text(encoding="utf-8")
+            header = document.split("---", 2)[1]
+            self.assertNotIn("produces", header)
+            self.assertIn("## Imported source metadata", document)
+            self.assertIn("produces:", document)
+            self.assertIn("translated non-portable", output)
+
     def test_import_dry_run_and_missing_license_leave_catalog_unchanged(self):
         with tempfile.TemporaryDirectory() as temporary:
             root = self.fixture(temporary)
@@ -129,8 +149,41 @@ class ContributionTests(unittest.TestCase):
                 ["import", str(without_license), "--category", "Developer Tools", "--non-interactive"], root,
             )
             self.assertEqual(code, 1)
-            self.assertIn("--license-file", output)
+            self.assertIn("--upstream", output)
             self.assertEqual(before, self.snapshot(root))
+
+    def test_import_without_license_file_preserves_declared_license_and_origin(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = self.fixture(temporary)
+            source = self.source_skill(temporary, with_license=False)
+            entry = source / "SKILL.md"
+            entry.write_text(entry.read_text(encoding="utf-8").replace("Apache-2.0", "MIT"), encoding="utf-8")
+            before = self.snapshot(source)
+            code, output = self.invoke([
+                "import", str(source), "--category", "Developer Tools", "--non-interactive",
+                "--upstream", "https://example.org/project/LICENSE",
+            ], root)
+            self.assertEqual(code, 0, output)
+            self.assertEqual(before, self.snapshot(source))
+            destination = root / "skills" / "imported-example"
+            self.assertFalse((destination / "LICENSE").exists())
+            card = (destination / "skill-card.md").read_text(encoding="utf-8")
+            self.assertIn("license: MIT", card)
+            self.assertIn("https://example.org/project/LICENSE", card)
+
+    def test_import_missing_license_declaration_is_not_defaulted_to_apache(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = self.fixture(temporary)
+            source = self.source_skill(temporary, with_license=False)
+            entry = source / "SKILL.md"
+            entry.write_text(entry.read_text(encoding="utf-8").replace("license: Apache-2.0\n", ""), encoding="utf-8")
+            code, output = self.invoke([
+                "import", str(source), "--category", "Developer Tools", "--non-interactive",
+                "--upstream", "https://example.org/project",
+            ], root)
+            self.assertEqual(code, 1, output)
+            self.assertIn("Missing --license;", output)
+            self.assertFalse((root / "skills" / "imported-example").exists())
 
     def test_import_rejects_nested_skills_before_copying(self):
         with tempfile.TemporaryDirectory() as temporary:

@@ -82,7 +82,7 @@ class ScaffoldConfig:
     product_description: str
     source_root: Path
     catalog_root: Path
-    license_file: Path
+    license_file: Path | None
     notice_file: Path | None = None
     with_openai: bool = False
     with_references: bool = False
@@ -179,7 +179,7 @@ def validate_config(config):
         raise ScaffoldError(
             "remote product skills must use a product repository outside SkillHub"
         )
-    if not config.license_file.is_file() or config.license_file.stat().st_size == 0:
+    if config.license_file is not None and (not config.license_file.is_file() or config.license_file.stat().st_size == 0):
         raise ScaffoldError("license file must be a non-empty file")
     if config.notice_file is not None and (
         not config.notice_file.is_file() or config.notice_file.stat().st_size == 0
@@ -200,6 +200,8 @@ def read_template(template_root, relative_path):
 
 def license_mismatch_warning(license_id, license_file):
     """Return a best-effort warning for an obvious license declaration mismatch."""
+    if license_file is None:
+        return None
     try:
         text = license_file.read_bytes()[:LICENSE_TEXT_READ_LIMIT].decode(
             "utf-8", errors="ignore"
@@ -276,7 +278,11 @@ def render_skill_card(config, template_root):
         "Replace with one sentence describing the skill's outcome.": config.description,
         "Replace with the maintaining team and maintainer contact mechanism.": f"TODO: Add the maintained contact mechanism for {config.owner}.",
         "- Lifecycle: `staging` or `published`": "- Lifecycle: `staging`",
-        "Replace with the SPDX identifier and required attribution files.": f"Declared as `{config.license_id}`; see the bundled `LICENSE` and any bundled `NOTICE`.",
+        "Replace with the SPDX identifier and required attribution files.": (
+            f"Declared as `{config.license_id}`; see the bundled `LICENSE` and any bundled `NOTICE`."
+            if config.license_file else
+            f"Original contribution under `{config.license_id}`; see https://github.com/{config.repo}/blob/{config.ref}/LICENSE. Preserve any applicable attribution and NOTICE."
+        ),
         "List required operating systems, hardware, network access, tools and write\nsurfaces. State `none` explicitly where appropriate.": "TODO: List required operating systems, hardware, network access, tools, and write surfaces.",
         "Describe the last representative validation environment without turning a\npartial or synthetic result into a production claim.": "TODO: Describe representative validation evidence and its limitations.",
     }
@@ -470,7 +476,8 @@ def create_scaffold(config, template_root=TEMPLATE_ROOT):
     if config.dry_run:
         print(f"Would create {config.destination}")
         print(f"Would update {component_path}")
-        print(f"Would copy license from {config.license_file}")
+        if config.license_file:
+            print(f"Would copy license from {config.license_file}")
         if config.notice_file:
             print(f"Would copy NOTICE from {config.notice_file}")
         return
@@ -482,7 +489,8 @@ def create_scaffold(config, template_root=TEMPLATE_ROOT):
     try:
         for relative, content in files.items():
             write_text(temporary / relative, content)
-        shutil.copyfile(config.license_file, temporary / "LICENSE")
+        if config.license_file:
+            shutil.copyfile(config.license_file, temporary / "LICENSE")
         if config.notice_file:
             shutil.copyfile(config.notice_file, temporary / "NOTICE")
 
@@ -497,7 +505,10 @@ def create_scaffold(config, template_root=TEMPLATE_ROOT):
 
     print(f"Created {config.destination}")
     print(f"Updated {component_path}")
-    print(f"Copied license from {config.license_file}")
+    if config.license_file:
+        print(f"Copied license from {config.license_file}")
+    else:
+        print(f"Original contribution uses repository license: {config.license_id}")
     if config.notice_file:
         print(f"Copied NOTICE from {config.notice_file}")
     print(
@@ -539,8 +550,7 @@ def parse_args(argv=None):
     parser.add_argument(
         "--license",
         dest="license_id",
-        required=True,
-        help="SPDX expression recorded in SKILL.md and skill-card.md",
+        help="SPDX expression; local original contributions default to Apache-2.0",
     )
     parser.add_argument(
         "--license-file",
@@ -597,6 +607,9 @@ def config_from_args(args):
     local = args.local or not args.repo
     repo = CATALOG_REPO if local else require_text(args.repo, "repo")
     source_root = catalog_root if local else Path(args.source_root).resolve()
+    license_id = args.license_id or ("Apache-2.0" if local else None)
+    if not license_id:
+        raise ScaffoldError("remote scaffolds require --license from the source project")
     if local and args.component not in (None, "skillhub"):
         raise ScaffoldError("local skills use the shared 'skillhub' component")
     component = "skillhub" if local else require_text(
@@ -609,6 +622,10 @@ def config_from_args(args):
         raise ScaffoldError(
             "no source LICENSE found; add one or pass --license-file explicitly"
         )
+    if local and license_id == "Apache-2.0" and not args.license_file:
+        if license_mismatch_warning(license_id, license_file):
+            raise ScaffoldError("root LICENSE does not match the default Apache-2.0 declaration")
+        license_file = None
     notice_file = resolve_optional_file(
         args.notice_file, source_root, ("NOTICE", "NOTICE.txt", "NOTICE.md")
     )
@@ -618,7 +635,7 @@ def config_from_args(args):
         ref=require_text(args.ref, "ref"),
         owner=require_text(args.owner, "owner"),
         description=require_text(args.description, "description"),
-        license_id=require_text(args.license_id, "license"),
+        license_id=require_text(license_id, "license"),
         category=require_text(args.category, "category"),
         local=local,
         component=component,

@@ -5,6 +5,12 @@ one with the other's guarantees.
 
 ## Local skills (default)
 
+Original contributions default to the repository Apache-2.0 license. A separate
+LICENSE in every skill is not required. Every Skill Card still declares a license;
+this declaration is checked, while redistribution rights and the sufficiency of
+license/NOTICE material require review. A local import retains the source license
+and attribution, and does not acquire a new license by being copied here.
+
 A local skill's only source of truth is this repository:
 
 - the component sets `local: true`;

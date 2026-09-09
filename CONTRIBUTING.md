@@ -123,10 +123,19 @@ restore scheduled synchronization and at what frequency.
 
 ## Generator notes
 
+Original contributions created with `contribute.py new` default to the root
+Apache-2.0 license and do not duplicate its LICENSE text in each directory.
+Contributors must have the right to license their work under those terms.
+Skill Cards still declare the applicable license. Importing third-party content
+does not change its license: preserve original attribution and required notices,
+and record the source or license location when the text is not bundled.
+Review redistribution obligations, including for standalone installation.
+
 Use `--dry-run` to review destinations first. The generator refuses to
-overwrite an existing skill, rejects unapproved repositories, categories and
-generic names, and requires a non-empty source `LICENSE` unless
-`--license-file` names another reviewed license text. It copies a root
+overwrite an existing skill, rejects invalid repository names, categories and
+generic names. New scaffolds check the source root license; local Apache-2.0
+scaffolds reference it without copying. `--license-file` explicitly bundles
+reviewed license text. The generator copies a root
 `NOTICE`, `NOTICE.txt` or `NOTICE.md` automatically; use `--notice-file` for a
 different required notice. With `--with-references`, it also creates a linked
 `references/details.md` scaffold and tells the agent when to read it. The

@@ -794,8 +794,8 @@ def validate_catalog(root=ROOT):
             errors.extend(validate_skill_card(skill_card, record, root))
 
         license_file = record["dir"] / "LICENSE"
-        if not license_file.is_file() or license_file.stat().st_size == 0:
-            errors.append("{}: a non-empty LICENSE file is required in every published package".format(rel))
+        if license_file.exists() and (not license_file.is_file() or license_file.stat().st_size == 0):
+            errors.append("{}: bundled LICENSE must be a non-empty file".format(rel))
 
         openai_yaml = record["dir"] / "agents" / "openai.yaml"
         if openai_yaml.exists():

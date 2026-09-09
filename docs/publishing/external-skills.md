@@ -17,13 +17,20 @@ python3 scripts/contribute.py import ../upstream-skill
 The source must be one flat directory containing `SKILL.md`. The importer copies
 its `SKILL.md`, references, scripts, assets and bundled LICENSE/NOTICE material;
 it does not execute or modify source files. It rejects nested skills, symlinks,
-caches, oversized packages and invalid portable frontmatter. An existing Skill
-Card is retained as context but adapted to local identity with lifecycle
-`staging`; upstream attribution remains in the card.
+caches, oversized packages and invalid required portable fields. Source-only
+frontmatter such as `produces` is retained in an **Imported source metadata**
+section of the copied `SKILL.md`, rather than left as an invalid top-level Agent
+Skills field. An existing Skill Card is retained as context but adapted to local
+identity with lifecycle `staging`; upstream attribution remains in the card.
 
-If the package does not include license text, provide the original reviewed file
-with `--license-file <path>`; the importer never substitutes SkillHub's root
-LICENSE. Review redistribution rights, complete remaining Skill Card TODOs, set
+If the package does not include license text, no duplicate file is required.
+Retain its declared license and original source metadata; if the card has no
+source, supply the original source or license URL with `--upstream <url>`.
+When no license is declared, the importer asks for the reviewed original license;
+it never defaults third-party content to Apache-2.0. Use `--license-file <path>`
+or `--notice-file <path>` when redistribution requires additional license or
+notice material. Existing bundled files are always preserved.
+Review redistribution rights, complete remaining Skill Card TODOs, set
 the lifecycle to `published`, and run:
 
 ```bash

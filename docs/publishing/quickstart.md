@@ -27,8 +27,9 @@ For a new skill, run the interactive local scaffold:
 python3 scripts/contribute.py new <skill-name>
 ```
 
-The command asks for owner, description, license and category, then creates the
-skill directory and local registration. Use `--dry-run` to preview destinations,
+The command asks for owner, description and category, then creates the
+skill directory and local registration. Original contributions default to the
+root Apache-2.0 license; no duplicate LICENSE file is generated. Use `--dry-run` to preview destinations,
 `--with-references` to create a linked reference scaffold, or `--help` to see
 flags for non-interactive automation.
 
@@ -94,7 +95,7 @@ the pull request in the GitHub browser; `gh` is not required.
 | `Catalog files are out of date` | Run `python3 scripts/contribute.py check` |
 | `category must be one of: ...` | The category is not in the taxonomy allowlist |
 | `template scaffold file is not publishable` | A `.template` file was copied in unrenamed |
-| `Missing --license-file` during import | The source package has no bundled license text; provide the source's reviewed license, never this repository's default LICENSE |
+| `Missing --license` or `Missing --upstream` during import | Confirm the original license and supply the original source or license URL; third-party content does not default to Apache-2.0 |
 | DCO check fails | The commit is missing `--signoff` |
 
 ## Remote components (opt-in)

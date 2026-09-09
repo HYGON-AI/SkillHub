@@ -25,6 +25,16 @@ class ImportSkillError(ValueError):
     """Import cannot proceed safely without correcting or confirming the input."""
 
 
+PORTABLE_FRONTMATTER_FIELDS = frozenset((
+    "name",
+    "description",
+    "license",
+    "compatibility",
+    "metadata",
+    "allowed-tools",
+))
+
+
 def plain_path(path):
     """Reject links, including Windows junctions, before walking or copying them."""
     info = path.lstat()
@@ -106,6 +116,38 @@ def read_document(path, *, optional_header=False):
     return data, "".join(lines[end + 1:])
 
 
+def normalize_skill_document(frontmatter, body, source_name):
+    """Translate source-only frontmatter into visible body context in the copy."""
+    portable = {
+        key: value for key, value in frontmatter.items()
+        if key in PORTABLE_FRONTMATTER_FIELDS
+    }
+    name = portable.get("name")
+    errors = catalog.validate_skill_frontmatter(portable, name, source_name)
+    if errors:
+        raise ImportSkillError("\n".join(errors))
+    source_only = {
+        key: value for key, value in frontmatter.items()
+        if key not in PORTABLE_FRONTMATTER_FIELDS
+    }
+    if source_only:
+        body = body.rstrip() + (
+            "\n\n## Imported source metadata\n\n"
+            "The following source-specific frontmatter was preserved during import "
+            "but is not part of the portable Agent Skills frontmatter contract.\n\n"
+            "```yaml\n"
+            + yaml.safe_dump(source_only, allow_unicode=True, sort_keys=False)
+            + "```\n"
+        )
+    document = (
+        "---\n"
+        + yaml.safe_dump(portable, allow_unicode=True, sort_keys=False)
+        + "---\n"
+        + body
+    )
+    return portable, document, tuple(source_only)
+
+
 def value_or_prompt(value, flag, label, args, prompt, categories=None):
     if value is not None:
         if not isinstance(value, str) or not value.strip():
@@ -151,7 +193,7 @@ def render_card(source, frontmatter, config, upstream):
         "Summary": config.description,
         "Owner": config.owner,
         "Source": f"Locally maintained at `{config.repo}`, path `{config.source_path}`.",
-        "License": f"Declared as `{config.license_id}`; see preserved LICENSE and any NOTICE material.",
+        "License": f"Declared as `{config.license_id}`; see original source licensing and any preserved LICENSE/NOTICE material. Import does not relicense this content.",
         "Runtime and permissions": frontmatter.get("compatibility") or "TODO: Record runtime requirements and permissions.",
         "Validation": "TODO: Record representative validation and known limitations; importing files is not a behavior test.",
     }
@@ -225,11 +267,11 @@ def registry_snapshot(root):
 def import_local_skill(args, root, prompt):
     source = inspect_source(args.source)
     root = root.resolve()
-    frontmatter, _ = read_document(source / "SKILL.md")
+    source_frontmatter, body = read_document(source / "SKILL.md")
+    frontmatter, imported_skill, source_only = normalize_skill_document(
+        source_frontmatter, body, source.name
+    )
     name = frontmatter.get("name")
-    errors = catalog.validate_skill_frontmatter(frontmatter, name, source.name)
-    if errors:
-        raise ImportSkillError("\n".join(errors))
     if not catalog.SKILL_NAME_RE.fullmatch(name) or name in catalog.FORBIDDEN_GENERIC_CATALOG_DIRS:
         raise ImportSkillError(
             "Source name must be globally descriptive lowercase hyphen-case; the importer does not rename skills"
@@ -273,12 +315,11 @@ def import_local_skill(args, root, prompt):
         sorted(catalog.ALLOWED_CATEGORIES),
     )
     license_file = select_material(source, args.license_file, "LICENSE")
-    if license_file is None:
-        path = value_or_prompt(
-            None, "--license-file",
-            "Path to the source's reviewed LICENSE (never inherited from SkillHub)", args, prompt,
+    upstream = args.upstream
+    if license_file is None and not existing.get("source"):
+        upstream = value_or_prompt(
+            upstream, "--upstream", "Original source or license URL (confirm redistribution is permitted)", args, prompt,
         )
-        license_file = select_material(source, path, "LICENSE")
     notice_file = select_material(source, args.notice_file, "NOTICE")
     config = generator.ScaffoldConfig(
         name=name,
@@ -304,14 +345,21 @@ def import_local_skill(args, root, prompt):
     if mismatch:
         print(mismatch)
     print(f"Import {name}: {source} -> {destination}")
+    if source_only:
+        print(
+            "WARNING: translated non-portable source frontmatter into "
+            "'Imported source metadata': " + ", ".join(source_only)
+        )
     print("Preserve SKILL.md and resources. Adapt or generate the Skill Card as staging; retain upstream attribution.")
     print("Review redistribution rights and any repository-level LICENSE or NOTICE before publishing.")
     with tempfile.TemporaryDirectory(prefix=".import-skill-", dir=root) as temporary:
         stage_root = Path(temporary)
         candidate = stage_root / config.source_path
         shutil.copytree(source, candidate, symlinks=True)
+        if source_only:
+            generator.write_text(candidate / "SKILL.md", imported_skill)
         inspect_source(candidate)
-        generator.write_text(candidate / "skill-card.md", render_card(candidate, frontmatter, config, args.upstream))
+        generator.write_text(candidate / "skill-card.md", render_card(candidate, frontmatter, config, upstream))
         for source_file, filename in ((license_file, "LICENSE"), (notice_file, "NOTICE")):
             if source_file:
                 plain_path(source_file)
