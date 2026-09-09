@@ -7,6 +7,10 @@ here. Generated skill synchronization updates may be grouped by release.
 
 ### Added
 
+- A local contribution helper with `new`, `import` and `check` commands. It
+  scaffolds or copies one local skill package and runs the existing repository
+  gates without creating branches, staging files, committing, pushing or
+  opening pull requests.
 - Layered repository foundation for published skills, staging, validation,
   product federation, and generated catalog metadata.
 - Normative repository layout, admission, publishing, and

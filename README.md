@@ -41,19 +41,33 @@ and are not written for one agent.
 
 ## Add a skill
 
-Scaffold a local skill, fill in the `TODO` markers, and open one pull request:
+Create a branch, then use one command to add a local skill. It prompts for
+the owner, description, license and category, and registers the skill locally:
 
 ```bash
-python3 scripts/new_skill.py my-skill-name \
-  --owner "Owning team" \
-  --description "What it does, when it triggers, and the nearest case that must not trigger it." \
-  --license Apache-2.0 \
-  --category "Developer Tools"
+python3 scripts/contribute.py new my-skill-name
 ```
 
-Pass `--repo HYGON-AI/<product>` instead to opt into a remote product source.
-See the [quick start](docs/publishing/quickstart.md) for the full walkthrough and
-[CONTRIBUTING.md](CONTRIBUTING.md) for the normative rules.
+Already have a self-contained skill directory? Import it instead; its `SKILL.md`,
+references, scripts, assets and bundled license material are copied without
+modifying the source:
+
+```bash
+python3 scripts/contribute.py import ../my-existing-skill
+```
+
+For either path, complete and review the Skill Card, set its lifecycle to
+`published`, then run all local gates with one command:
+
+```bash
+python3 scripts/contribute.py check
+```
+
+Review the resulting diff, commit with `--signoff`, push your branch and open a
+pull request in the browser. The helper never creates branches, commits, pushes
+or pull requests. Remote synchronization remains an opt-in advanced path; see
+the [quick start](docs/publishing/quickstart.md) and
+[CONTRIBUTING.md](CONTRIBUTING.md) for the rules.
 
 ## Repository structure
 

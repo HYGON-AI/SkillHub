@@ -12,8 +12,8 @@ lifecycle: published
 
 ## Summary
 
-Creates, reviews, registers, synchronizes, and validates portable skills for
-the HYGON-AI organization catalog.
+Creates, imports, reviews, registers, synchronizes, and validates portable
+skills for the HYGON-AI organization catalog.
 
 ## Owner
 

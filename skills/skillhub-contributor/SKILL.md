@@ -5,7 +5,7 @@ license: Apache-2.0
 compatibility: Requires Python 3.11+ and Git. Network access is needed for reference checks or synchronizing an opt-in remote GitHub repository.
 metadata:
   author: HYGON-AI
-  version: "1.2.0"
+  version: "1.3.0"
 ---
 
 # Contribute to Hygon SkillHub
@@ -34,18 +34,15 @@ product repository or inside this installed skill.
 ## Workflow
 
 1. Confirm the owning team, the mode, license, and intended user prompts.
-2. For a new skill, use `python3 scripts/new_skill.py --help` from the SkillHub checkout. Without `--repo` it creates a local skill; `--repo` authors a new package in a separate source checkout. For an existing upstream skill, register its real repository/path directly without scaffolding over it; confirm its card and license already meet admission requirements. Do not require or generate a separate eval dataset.
+2. For a new local skill, run `python3 scripts/contribute.py new <name>` from the SkillHub checkout. For one existing local directory, run `python3 scripts/contribute.py import <path>`; it copies the package without changing or executing the source and leaves its card at `staging`. Use `scripts/new_skill.py --repo` only when a product team explicitly chooses ongoing remote synchronization. Do not require or generate a separate eval dataset.
 3. Use lowercase letters, digits, and hyphens for the directory and frontmatter `name`, and keep the name globally descriptive.
 4. Keep `SKILL.md` focused on procedures the agent cannot infer. Put detailed knowledge in `references/`, deterministic helpers in `scripts/`, and output material in `assets/`. Do not nest another `SKILL.md`.
 5. Complete the scaffold sections in `SKILL.md` and `skill-card.md`, record actual validation and limitations, then set the Skill Card lifecycle to `published`.
-6. Review the generated `components.d/<component>.yml` change, or add it manually. Map every `path` to a globally unique `catalog_dir` and choose an allowlisted category.
-7. Run `python3 scripts/generate_catalog.py`, then `python3 scripts/validate_skills.py`, `python3 scripts/validate_agent_skills_spec.py`, and `python3 scripts/generate_catalog.py --check` from the SkillHub root.
-8. For a remote component only, preview synchronization with `python3 scripts/sync_sources.py --check --component <component-file-stem>`. The check must prove the ref, resolved commit, source digest, lock entry, and published tree agree. Apply it only after reviewing the reported destinations.
-9. Verify the pinned `npx skills@1.5.23 add . --list` and `--full-depth`
-   discovery commands both list exactly the registered published skills. A
-   catalog-owned staging entrypoint must remain `SKILL.md.candidate` until
-   promotion.
-10. A local skill lands in one pull request. An existing publishable remote skill also needs only one SkillHub PR containing registration, mirror and lock. Change upstream first only if the source package needs work. Require Quality Gate, catalog validation, DCO and maintainer review before merge.
+6. Review the generated `components.d/skillhub.yml` change. The helper registers a local package under its globally unique `catalog_dir` and chosen allowlisted category; do not hand-edit generated catalog files.
+7. Run `python3 scripts/contribute.py check` from the SkillHub root. It regenerates catalog files and runs unit, policy, specification, provenance and normal/full-depth discovery checks without submitting Git changes.
+8. For a remote component only, apply synchronization separately after reviewing destinations, then rerun `contribute.py check`. Remote provenance must prove the ref, resolved commit, source digest, lock entry and published tree agree.
+9. A catalog-owned staging entrypoint must remain `SKILL.md.candidate` until promotion.
+10. Review the diff and use ordinary Git to submit one signed-off pull request. A local skill lands in one PR; a synchronized remote skill also needs one SkillHub PR containing registration, mirror and lock. Require Quality Gate, catalog validation, DCO and maintainer review before merge.
 
 Read [onboarding.md](references/onboarding.md) for the component schema, release checklist, and troubleshooting commands.
 

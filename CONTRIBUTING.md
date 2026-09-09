@@ -16,8 +16,8 @@ documents.
 - Only direct children of `skills/` are published catalog identities.
 - Generated mirrors, catalog files and lock files are never repaired by hand.
 
-Use [`scripts/new_skill.py`](scripts/new_skill.py) for the mechanical scaffold
-or fall back to [`templates/skill/`](templates/skill). Read the
+Use [`scripts/contribute.py`](scripts/contribute.py) for the normal local
+workflow, or fall back to [`templates/skill/`](templates/skill). Read the
 [repository layout](docs/architecture/repository-layout.md),
 [admission policy](docs/governance/admission.md). Reuse the stable categories
 in the [catalog taxonomy](docs/governance/taxonomy.md).
@@ -37,35 +37,40 @@ Third-party skills may be mirrored unchanged when their license permits it and t
 For a condensed walkthrough with the common failure messages, see
 [Add a skill: quick start](docs/publishing/quickstart.md).
 
-Run the generator from a SkillHub checkout. Without `--repo` it creates the
-skill here and registers it with `local: true`:
+From a SkillHub checkout, create and register a new local skill with an
+interactive command:
 
 ```bash
-python3 scripts/new_skill.py quality-gate-audit \
-  --owner "Quality Gate Team" \
-  --description "Audit a repository when publication readiness must be verified." \
-  --license Apache-2.0 \
-  --category "Governance and Compliance" \
-  --with-references
+python3 scripts/contribute.py new quality-gate-audit
 ```
 
-Then:
+For an existing skill directory, use the import path instead. It retains the
+source package and copies its portable resources; it does not establish ongoing
+synchronization:
+
+```bash
+python3 scripts/contribute.py import ../quality-gate-audit
+```
+
+Then, for either path:
 
 1. Replace the scaffold `TODO` sections in `SKILL.md` and `skill-card.md`.
+   An imported Skill Card is deliberately set to `staging`; preserve upstream
+   attribution and license material and complete any missing local review notes.
 2. Set the Skill Card lifecycle to `published` once the evidence is real.
-3. Regenerate and validate:
+3. Run all local gates:
 
    ```bash
-   python3 scripts/generate_catalog.py
-   python3 scripts/validate_skills.py
-   python3 scripts/validate_agent_skills_spec.py
-   python3 scripts/generate_catalog.py --check
-   npx --yes skills@1.5.23 add . --list
-   npx --yes skills@1.5.23 add . --list --full-depth
+   python3 scripts/contribute.py check
    ```
 
 4. Open one pull request with the content, its registration and the regenerated
    catalog files.
+
+The helper never creates a branch, stages files, commits, pushes or opens a
+pull request. Use ordinary Git and `git commit --signoff` after reviewing the
+generated diff. For non-interactive automation, pass the metadata flags shown
+by `python3 scripts/contribute.py new --help`.
 
 A local component may omit `repo`; when present it must equal
 `HYGON-AI/skillhub`, and the skill's source path must equal

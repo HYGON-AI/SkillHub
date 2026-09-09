@@ -2,27 +2,17 @@
 
 ## Scaffold command
 
-From the SkillHub checkout, generate the product-owned directory and component
-registration together:
+From the SkillHub checkout, create a local directory and registration together:
 
 ```bash
-python3 scripts/new_skill.py example-skill \
-  --source-root ../product-repository \
-  --repo HYGON-AI/product-repository \
-  --owner "Product Team" \
-  --description "Describe the capability and when it should trigger." \
-  --license Apache-2.0 \
-  --category Inference \
-  --with-references
+python3 scripts/contribute.py new example-skill --with-references
 ```
 
-Review with `--dry-run` when paths or repository checkouts are uncertain. The
-generated card deliberately remains `staging`; complete every `TODO`, replace
-the Eval prompts with real routing boundaries, and set `published` only after
-the evidence is ready. A local skill then lands in one pull request. For a
-remote component, commit and merge the product repository first; the component
-change remains local in SkillHub until the source ref contains the reviewed
-Skill. With `--with-references`, the generated `SKILL.md` links to the new
+Review with `--dry-run` when paths are uncertain. The generated card deliberately
+remains `staging`; complete every `TODO` and set `published` only after the
+evidence is ready. For an existing package, use
+`python3 scripts/contribute.py import ../existing-skill` instead of scaffolding
+over it. With `--with-references`, the generated `SKILL.md` links to the new
 `references/details.md` scaffold so contributors can state when detailed
 material should be loaded.
 
@@ -91,14 +81,10 @@ Each `catalog_dir` must be unique across the catalog. Keep it equal to the skill
 ## Commands
 
 ```bash
-python3 scripts/validate_skills.py
-python3 scripts/validate_agent_skills_spec.py
-python3 scripts/generate_catalog.py
-python3 scripts/generate_catalog.py --check
+python3 scripts/contribute.py check
+# Remote synchronization is opt-in and separate from the local contribution flow.
 python3 scripts/sync_sources.py --check --component product-slug
 python3 scripts/sync_sources.py --component product-slug
-npx --yes skills@1.5.23 add . --list
-npx --yes skills@1.5.23 add . --list --full-depth
 ```
 
 After publication, verify discovery without installing:

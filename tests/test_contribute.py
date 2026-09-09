@@ -1,0 +1,175 @@
+# Copyright (c) 2026 Hygon Information Technology Co., Ltd.
+# SPDX-License-Identifier: Apache-2.0
+
+import io
+import os
+from pathlib import Path
+import shutil
+import subprocess
+import sys
+import tempfile
+import unittest
+from contextlib import redirect_stderr, redirect_stdout
+from unittest import mock
+
+import yaml
+
+from scripts import contribute
+from scripts.new_skill import TEMPLATE_ROOT
+
+
+class ContributionTests(unittest.TestCase):
+    def invoke(self, argv, root=contribute.ROOT):
+        output = io.StringIO()
+        with redirect_stdout(output), redirect_stderr(output):
+            result = contribute.main(argv, root=root)
+        return result, output.getvalue()
+
+    def fixture(self, directory):
+        root = Path(directory) / "catalog"
+        (root / "components.d").mkdir(parents=True)
+        (root / "staging").mkdir()
+        shutil.copytree(TEMPLATE_ROOT, root / "templates" / "skill")
+        (root / "LICENSE").write_text("Apache License\nVersion 2.0\n", encoding="utf-8")
+        (root / "NOTICE").write_text("Original attribution\n", encoding="utf-8")
+        (root / ".skillhub-lock.json").write_text('{"schema_version": 1, "skills": {}}\n', encoding="utf-8")
+        (root / "admission-exceptions.yml").write_text("schema_version: 1\nexceptions: []\n", encoding="utf-8")
+        return root
+
+    def source_skill(self, directory, *, with_license=True):
+        source = Path(directory) / "source-skill"
+        (source / "references").mkdir(parents=True)
+        (source / "SKILL.md").write_text(
+            "---\n"
+            "name: imported-example\n"
+            "description: Analyze example logs when an example workflow needs diagnosis.\n"
+            "license: Apache-2.0\n"
+            "metadata:\n"
+            "  author: External Team\n"
+            "---\n\n"
+            "# Imported Example\n\n"
+            "Use the included reference when the logs require detailed interpretation.\n",
+            encoding="utf-8",
+        )
+        (source / "references" / "details.md").write_bytes(b"source resource\n")
+        if with_license:
+            (source / "LICENSE").write_text("Apache License\nVersion 2.0\n", encoding="utf-8")
+        return source
+
+    @staticmethod
+    def snapshot(root):
+        root = Path(root)
+        return {
+            path.relative_to(root): path.read_bytes()
+            for path in root.rglob("*")
+            if path.is_file()
+        }
+
+    def test_new_prompts_for_metadata_and_registers_a_local_skill(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = self.fixture(temporary)
+            answers = [
+                "Tool Team",
+                "Analyze tool logs when an operator needs a diagnosis.",
+                "Apache-2.0",
+                "Developer Tools",
+            ]
+            with mock.patch("builtins.input", side_effect=answers):
+                code, output = self.invoke(["new", "tool-log-analysis"], root)
+            self.assertEqual(code, 0, output)
+            card = (root / "skills" / "tool-log-analysis" / "skill-card.md").read_text(encoding="utf-8")
+            self.assertIn("lifecycle: staging", card)
+            registry = yaml.safe_load((root / "components.d" / "skillhub.yml").read_text(encoding="utf-8"))
+            self.assertTrue(registry["local"])
+            self.assertIn("contribute.py check tool-log-analysis", output)
+
+    def test_new_noninteractive_requires_all_author_metadata(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = self.fixture(temporary)
+            before = self.snapshot(root)
+            code, output = self.invoke(["new", "tool-log-analysis", "--non-interactive"], root)
+            self.assertEqual(code, 1)
+            self.assertIn("--owner", output)
+            self.assertEqual(before, self.snapshot(root))
+
+    def test_import_copies_resources_without_modifying_the_source(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = self.fixture(temporary)
+            source = self.source_skill(temporary)
+            before = self.snapshot(source)
+            code, output = self.invoke(
+                ["import", str(source), "--category", "Developer Tools", "--non-interactive"], root,
+            )
+            self.assertEqual(code, 0, output)
+            self.assertEqual(before, self.snapshot(source))
+            destination = root / "skills" / "imported-example"
+            self.assertEqual(
+                (destination / "references" / "details.md").read_bytes(),
+                b"source resource\n",
+            )
+            card = (destination / "skill-card.md").read_text(encoding="utf-8")
+            self.assertIn("lifecycle: staging", card)
+            self.assertIn("Local catalog import", card)
+            registry = yaml.safe_load((root / "components.d" / "skillhub.yml").read_text(encoding="utf-8"))
+            self.assertEqual(registry["skills"][0]["catalog_dir"], "imported-example")
+
+    def test_import_dry_run_and_missing_license_leave_catalog_unchanged(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = self.fixture(temporary)
+            source = self.source_skill(temporary)
+            before = self.snapshot(root)
+            code, output = self.invoke(
+                ["import", str(source), "--category", "Developer Tools", "--non-interactive", "--dry-run"], root,
+            )
+            self.assertEqual(code, 0, output)
+            self.assertEqual(before, self.snapshot(root))
+
+            without_license = self.source_skill(Path(temporary) / "missing", with_license=False)
+            code, output = self.invoke(
+                ["import", str(without_license), "--category", "Developer Tools", "--non-interactive"], root,
+            )
+            self.assertEqual(code, 1)
+            self.assertIn("--license-file", output)
+            self.assertEqual(before, self.snapshot(root))
+
+    def test_import_rejects_nested_skills_before_copying(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = self.fixture(temporary)
+            source = self.source_skill(temporary)
+            (source / "references" / "SKILL.md").write_text("nested", encoding="utf-8")
+            code, output = self.invoke(
+                ["import", str(source), "--category", "Developer Tools", "--non-interactive"], root,
+            )
+            self.assertEqual(code, 1)
+            self.assertIn("nested SKILL.md", output)
+            self.assertFalse((root / "skills" / "imported-example").exists())
+
+    def test_check_runs_existing_gates_without_submitting_git_changes(self):
+        completed = subprocess.CompletedProcess([], 0, "CLI output")
+        with mock.patch.object(contribute, "check_environment", return_value="npx.cmd"), \
+             mock.patch.object(contribute, "run", return_value=completed) as runner:
+            code, output = self.invoke(["check"])
+        self.assertEqual(code, 0, output)
+        commands = [call.args[0] for call in runner.call_args_list]
+        self.assertEqual(commands[0], [sys.executable, "scripts/generate_catalog.py"])
+        self.assertEqual(commands[5], [sys.executable, "scripts/sync_sources.py", "--check"])
+        self.assertEqual(commands[6], ["npx.cmd", "--yes", "skills@1.5.23", "add", ".", "--list"])
+        self.assertEqual(commands[-2], ["npx.cmd", "--yes", "skills@1.5.23", "add", ".", "--list", "--full-depth"])
+        self.assertIn("No branch, Git index, commit, push or pull request is created", output)
+
+    def test_help_and_unknown_submit_do_not_require_dependencies(self):
+        result = subprocess.run(
+            [sys.executable, "-S", str(contribute.ROOT / "scripts" / "contribute.py"), "--help"],
+            capture_output=True,
+            text=True,
+            timeout=10,
+        )
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertIn("{new,import,check}", result.stdout)
+        with self.assertRaises(SystemExit) as failure:
+            self.invoke(["submit"])
+        self.assertEqual(failure.exception.code, 2)
+
+
+if __name__ == "__main__":
+    unittest.main()

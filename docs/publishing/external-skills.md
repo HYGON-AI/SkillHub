@@ -1,10 +1,45 @@
-# Import external skills
+# Skills from another repository
 
-SkillHub accepts GitHub organization and personal repositories. An existing,
-publishable upstream package needs one SkillHub PR; its repository does not
-need to install our CI. Local contributions remain the default.
+SkillHub accepts skills from GitHub organizations and personal repositories.
+The default is a one-time local import: it preserves the source package but
+makes the reviewed copy a SkillHub-maintained skill. Ongoing synchronization is
+an explicit advanced option.
 
-## First import
+## Default: one-time local import
+
+Clone or otherwise obtain the source directory, then run this from a SkillHub
+contribution branch:
+
+```bash
+python3 scripts/contribute.py import ../upstream-skill
+```
+
+The source must be one flat directory containing `SKILL.md`. The importer copies
+its `SKILL.md`, references, scripts, assets and bundled LICENSE/NOTICE material;
+it does not execute or modify source files. It rejects nested skills, symlinks,
+caches, oversized packages and invalid portable frontmatter. An existing Skill
+Card is retained as context but adapted to local identity with lifecycle
+`staging`; upstream attribution remains in the card.
+
+If the package does not include license text, provide the original reviewed file
+with `--license-file <path>`; the importer never substitutes SkillHub's root
+LICENSE. Review redistribution rights, complete remaining Skill Card TODOs, set
+the lifecycle to `published`, and run:
+
+```bash
+python3 scripts/contribute.py check
+```
+
+Then review the diff and submit one ordinary signed-off pull request. This is a
+local copy, so later upstream changes are not pulled automatically.
+
+## Opt in to remote synchronization
+
+Use this only when the product team wants the skill to remain maintained in its
+own repository and evolve alongside its code. The rest of this page describes
+that remote mirror path.
+
+### First synchronized import
 
 1. Confirm the license permits redistribution, preserve upstream attribution
    and required LICENSE/NOTICE files, and identify a catalog maintainer in the
@@ -49,7 +84,7 @@ need to install our CI. Local contributions remain the default.
    catalog validation and DCO must pass, followed by maintainer review.
    Do not merge a source-only registration before its mirror and lock.
 
-## Subsequent updates
+### Subsequent updates
 
 After the first import is merged, run **Sync Opt-in Product Skills** manually
 from Actions. It fetches registered sources, validates packages, updates mirrors

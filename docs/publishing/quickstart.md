@@ -1,41 +1,49 @@
 # Add a skill: quick start
 
-The end-to-end path for adding a skill. Steps 1-5 cover a local skill, which is
-the default; the last section covers importing an existing skill or authoring
-a new skill in any GitHub organization or personal repository. For the normative
-rules see
+The normal path is a local skill: create or import it in this repository, review
+the content, run one local check command, and open one pull request. For the
+normative rules see
 [CONTRIBUTING.md](../../CONTRIBUTING.md); for the release flow see
 [publishing](README.md).
 
 ```
-new_skill.py
-  -> fill TODOs, set lifecycle: published
-  -> generate_catalog.py
-  -> validate
+contribute.py new | import
+  -> review SKILL.md and skill-card.md; set lifecycle: published
+  -> contribute.py check
   -> commit --signoff, open one pull request
 ```
 
-## 1. Branch
+## 1. Create a branch
 
 ```bash
 git checkout -b feat/add-<skill-name>
 ```
 
-## 2. Scaffold
+## 2. Add the skill
+
+For a new skill, run the interactive local scaffold:
 
 ```bash
-python3 scripts/new_skill.py <skill-name> \
-  --owner "Owning team" \
-  --description "What it does, when it triggers, and the nearest case that must not trigger it." \
-  --license Apache-2.0 \
-  --category "Performance and Profiling" \
-  --with-openai
+python3 scripts/contribute.py new <skill-name>
 ```
 
-Omitting `--repo` creates a local skill; `--component` is not needed, since
-local skills share the `skillhub` component. Add `--dry-run` first to review
-destinations, and `--with-references` if the skill needs a `references/`
-scaffold linked from `SKILL.md`.
+The command asks for owner, description, license and category, then creates the
+skill directory and local registration. Use `--dry-run` to preview destinations,
+`--with-references` to create a linked reference scaffold, or `--help` to see
+flags for non-interactive automation.
+
+For an existing skill directory, import its package instead:
+
+```bash
+python3 scripts/contribute.py import ../existing-skill
+```
+
+`import` copies one flat skill directory, including `SKILL.md`, `references/`,
+`scripts/`, `assets/` and bundled LICENSE/NOTICE material. It does not execute
+source files or modify the source directory. It reuses source metadata where it
+is trustworthy, asks only for missing values, and always changes the imported
+Skill Card lifecycle to `staging`. It is a one-time local copy, not upstream
+synchronization.
 
 The category must match [the taxonomy](../governance/taxonomy.md) exactly; a
 wrong value prints the allowed set. Bare generic names such as `profile`,
@@ -43,7 +51,7 @@ wrong value prints the allowed set. Bare generic names such as `profile`,
 
 ## 3. Fill in the content
 
-This is the only step a generator cannot do.
+This is the only step no helper can do for the author.
 
 - **`SKILL.md`** -- replace the body, keeping the generated frontmatter. Stay at
   or below 500 lines and move detail into `references/`.
@@ -56,29 +64,26 @@ This is the only step a generator cannot do.
 No separate eval file is needed. Describe what you actually tried, the observed
 results and known limitations in the Skill Card's **Validation** section.
 
-## 4. Generate and validate
+## 4. Check, then submit
 
 ```bash
-python3 scripts/generate_catalog.py
-python3 scripts/validate_skills.py
-python3 scripts/validate_agent_skills_spec.py
-python3 scripts/generate_catalog.py --check
-npx --yes skills@1.5.23 add . --list
+python3 scripts/contribute.py check
 ```
 
-Run the generator before `--check`, or the check reports drift it just created.
-
-## 5. Submit
+This runs catalog generation, unit tests, policy validation, Agent Skills
+validation, generated-file checks, remote-provenance checks (when present), and
+normal/full-depth CLI discovery. It regenerates catalog files but never updates
+a remote mirror or submits Git changes.
 
 ```bash
 git add -A
 git commit --signoff -m "feat(skills): add <skill-name>"
 git push -u origin feat/add-<skill-name>
-gh pr create --fill
 ```
 
 One pull request carries the content, its registration and the regenerated
-catalog files. `--signoff` is required; the DCO check fails without it.
+catalog files. `--signoff` is required; the DCO check fails without it. Open
+the pull request in the GitHub browser; `gh` is not required.
 
 ## Common failures
 
@@ -86,18 +91,21 @@ catalog files. `--signoff` is required; the DCO check fails without it.
 | --- | --- |
 | `lifecycle must equal 'published'` | The Skill Card is still `staging` |
 | `unresolved scaffold placeholder` | A `TODO` or `Replace with` marker remains |
-| `Catalog files are out of date` | `generate_catalog.py` was not run before `--check` |
+| `Catalog files are out of date` | Run `python3 scripts/contribute.py check` |
 | `category must be one of: ...` | The category is not in the taxonomy allowlist |
 | `template scaffold file is not publishable` | A `.template` file was copied in unrenamed |
+| `Missing --license-file` during import | The source package has no bundled license text; provide the source's reviewed license, never this repository's default LICENSE |
 | DCO check fails | The commit is missing `--signoff` |
 
 ## Remote components (opt-in)
 
 Remote sources use GitHub `<owner>/<repository>` form; they are not restricted
-to the HYGON-AI organization. Choose the path that matches your source:
+to the HYGON-AI organization. This is different from `contribute.py import`,
+which makes a one-time locally maintained copy. Choose the path that matches
+your source:
 
-- **Import an existing skill:** register and synchronize the existing package
-  in one SkillHub PR; follow [Import external skills](external-skills.md).
+- **Keep an existing skill synchronized:** register and mirror the existing
+  package; follow [Import external skills](external-skills.md).
 - **Create a new skill in a source repository:** use the authoring steps below,
   merge the source change first, then submit the SkillHub import PR.
 

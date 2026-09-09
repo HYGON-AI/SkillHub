@@ -5,9 +5,12 @@ For the step-by-step contributor path, see
 
 ## Local skill (default)
 
-1. Add the self-contained skill under `skills/<skill-name>/` in this repository.
-2. Register it in `components.d/<component>.yml` with `local: true`.
-3. Regenerate metadata and run all catalog checks.
+1. Run `python3 scripts/contribute.py new <skill-name>` or import one existing
+   package with `python3 scripts/contribute.py import <path>`.
+2. Review its Skill Card, attribution and license material, then set its
+   lifecycle to `published`.
+3. Run `python3 scripts/contribute.py check` to regenerate metadata and run all
+   catalog checks.
 4. Merge one protected pull request carrying content, registration and
    generated catalog files.
 5. Verify discovery from a clean checkout before announcing release.
