@@ -126,6 +126,9 @@ restore scheduled synchronization and at what frequency.
 Original contributions created with `contribute.py new` default to the root
 Apache-2.0 license and do not duplicate its LICENSE text in each directory.
 Contributors must have the right to license their work under those terms.
+Local directory imports follow the same original-contribution default when no
+license is declared; they do not prompt for a license or source URL. Existing
+declarations remain authoritative and `--upstream` is optional.
 Skill Cards still declare the applicable license. Importing third-party content
 does not change its license: preserve original attribution and required notices,
 and record the source or license location when the text is not bundled.

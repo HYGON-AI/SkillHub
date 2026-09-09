@@ -133,7 +133,7 @@ class ContributionTests(unittest.TestCase):
             self.assertIn("produces:", document)
             self.assertIn("translated non-portable", output)
 
-    def test_import_dry_run_and_missing_license_leave_catalog_unchanged(self):
+    def test_import_dry_run_without_license_leaves_catalog_unchanged(self):
         with tempfile.TemporaryDirectory() as temporary:
             root = self.fixture(temporary)
             source = self.source_skill(temporary)
@@ -146,10 +146,9 @@ class ContributionTests(unittest.TestCase):
 
             without_license = self.source_skill(Path(temporary) / "missing", with_license=False)
             code, output = self.invoke(
-                ["import", str(without_license), "--category", "Developer Tools", "--non-interactive"], root,
+                ["import", str(without_license), "--category", "Developer Tools", "--non-interactive", "--dry-run"], root,
             )
-            self.assertEqual(code, 1)
-            self.assertIn("--upstream", output)
+            self.assertEqual(code, 0, output)
             self.assertEqual(before, self.snapshot(root))
 
     def test_import_without_license_file_preserves_declared_license_and_origin(self):
@@ -171,7 +170,7 @@ class ContributionTests(unittest.TestCase):
             self.assertIn("license: MIT", card)
             self.assertIn("https://example.org/project/LICENSE", card)
 
-    def test_import_missing_license_declaration_is_not_defaulted_to_apache(self):
+    def test_import_original_defaults_to_apache_without_license_or_origin_prompt(self):
         with tempfile.TemporaryDirectory() as temporary:
             root = self.fixture(temporary)
             source = self.source_skill(temporary, with_license=False)
@@ -179,11 +178,12 @@ class ContributionTests(unittest.TestCase):
             entry.write_text(entry.read_text(encoding="utf-8").replace("license: Apache-2.0\n", ""), encoding="utf-8")
             code, output = self.invoke([
                 "import", str(source), "--category", "Developer Tools", "--non-interactive",
-                "--upstream", "https://example.org/project",
             ], root)
-            self.assertEqual(code, 1, output)
-            self.assertIn("Missing --license;", output)
-            self.assertFalse((root / "skills" / "imported-example").exists())
+            self.assertEqual(code, 0, output)
+            destination = root / "skills" / "imported-example"
+            self.assertIn("license: Apache-2.0", (destination / "skill-card.md").read_text(encoding="utf-8"))
+            self.assertFalse((destination / "LICENSE").exists())
+            self.assertNotIn("license:", entry.read_text(encoding="utf-8"))
 
     def test_import_rejects_nested_skills_before_copying(self):
         with tempfile.TemporaryDirectory() as temporary:

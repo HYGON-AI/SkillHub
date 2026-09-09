@@ -95,7 +95,7 @@ the pull request in the GitHub browser; `gh` is not required.
 | `Catalog files are out of date` | Run `python3 scripts/contribute.py check` |
 | `category must be one of: ...` | The category is not in the taxonomy allowlist |
 | `template scaffold file is not publishable` | A `.template` file was copied in unrenamed |
-| `Missing --license` or `Missing --upstream` during import | Confirm the original license and supply the original source or license URL; third-party content does not default to Apache-2.0 |
+| `Conflicting license declarations` during import | Existing declarations and an explicit `--license` disagree; resolve the conflict without overwriting source rights. Undeclared original imports default to Apache-2.0; no license or source URL prompt is required. |
 | DCO check fails | The commit is missing `--signoff` |
 
 ## Remote components (opt-in)

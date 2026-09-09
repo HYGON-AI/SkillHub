@@ -303,10 +303,7 @@ def import_local_skill(args, root, prompt):
         raise ImportSkillError(
             "Conflicting license declarations in SKILL.md, Skill Card or --license; resolve them without changing upstream authorship"
         )
-    license_id = value_or_prompt(
-        declarations[0] if declarations else None,
-        "--license", "Reviewed license expression (must match original text)", args, prompt,
-    )
+    license_id = declarations[0] if declarations else "Apache-2.0"
     category = value_or_prompt(
         args.category or (
             metadata.get("category") if metadata.get("category") in catalog.ALLOWED_CATEGORIES else None
@@ -316,10 +313,6 @@ def import_local_skill(args, root, prompt):
     )
     license_file = select_material(source, args.license_file, "LICENSE")
     upstream = args.upstream
-    if license_file is None and not existing.get("source"):
-        upstream = value_or_prompt(
-            upstream, "--upstream", "Original source or license URL (confirm redistribution is permitted)", args, prompt,
-        )
     notice_file = select_material(source, args.notice_file, "NOTICE")
     config = generator.ScaffoldConfig(
         name=name,
@@ -345,6 +338,8 @@ def import_local_skill(args, root, prompt):
     if mismatch:
         print(mismatch)
     print(f"Import {name}: {source} -> {destination}")
+    if not declarations:
+        print("Original contribution defaults to repository Apache-2.0; contributor must have the right to publish under these terms.")
     if source_only:
         print(
             "WARNING: translated non-portable source frontmatter into "

@@ -24,10 +24,12 @@ Skills field. An existing Skill Card is retained as context but adapted to local
 identity with lifecycle `staging`; upstream attribution remains in the card.
 
 If the package does not include license text, no duplicate file is required.
-Retain its declared license and original source metadata; if the card has no
-source, supply the original source or license URL with `--upstream <url>`.
-When no license is declared, the importer asks for the reviewed original license;
-it never defaults third-party content to Apache-2.0. Use `--license-file <path>`
+Local directory imports are intended for your own original contributions. When
+no license is declared, they default to the repository Apache-2.0 license without
+asking for license or source URLs; you must have the right to publish under these
+terms. Existing license declarations and source metadata are preserved, not
+overwritten. `--upstream <url>` is optional. This default is not permission to
+relicense third-party content. Use `--license-file <path>`
 or `--notice-file <path>` when redistribution requires additional license or
 notice material. Existing bundled files are always preserved.
 Review redistribution rights, complete remaining Skill Card TODOs, set

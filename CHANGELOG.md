@@ -25,11 +25,15 @@ here. Generated skill synchronization updates may be grouped by release.
 
 ### Changed
 
+- Local directory imports now assume original contributions: absent license
+  declarations default to Apache-2.0, with no license or source URL prompt.
+  Contributors must have publishing rights; existing declarations and legal
+  files are preserved, and conflicting declarations still fail validation.
 - Per-skill LICENSE text is optional; Skill Card license declarations remain
   required. Original local scaffolds default to root Apache-2.0 without copying
   LICENSE. Imports preserve source declarations and bundled license/NOTICE
   material, accepting recorded source licensing instead of requiring a duplicate
-  file; missing third-party authorization is not defaulted to Apache-2.0.
+  file. The original-contribution default does not authorize third-party relicensing.
 - Local imports retain nonstandard frontmatter such as `produces` in the copied
   SKILL.md body while preserving the source directory.
 - Removed the mandatory `evals/evals.json` dataset, its schema/count validation,
