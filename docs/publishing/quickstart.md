@@ -1,8 +1,9 @@
 # Add a skill: quick start
 
 The end-to-end path for adding a skill. Steps 1-5 cover a local skill, which is
-the default; the last section covers the opt-in remote path for a skill owned
-by a product repository. For the normative rules see
+the default; the last section covers importing an existing skill or authoring
+a new skill in any GitHub organization or personal repository. For the normative
+rules see
 [CONTRIBUTING.md](../../CONTRIBUTING.md); for the release flow see
 [publishing](README.md).
 
@@ -93,9 +94,16 @@ catalog files. `--signoff` is required; the DCO check fails without it.
 
 ## Remote components (opt-in)
 
-For an existing third-party Skill, use [Import external skills](external-skills.md):
-register the source and import it in one SkillHub PR. The upstream package must
-already meet the publication contract; do not scaffold over an existing Skill.
+Remote sources use GitHub `<owner>/<repository>` form; they are not restricted
+to the HYGON-AI organization. Choose the path that matches your source:
+
+- **Import an existing skill:** register and synchronize the existing package
+  in one SkillHub PR; follow [Import external skills](external-skills.md).
+- **Create a new skill in a source repository:** use the authoring steps below,
+  merge the source change first, then submit the SkillHub import PR.
+
+An existing upstream package must already meet the publication contract;
+do not scaffold over an existing skill.
 
 Use the following authoring flow when a team maintains the skill in a separate GitHub
 repository and wants it to evolve alongside the code it documents. Everything
@@ -104,26 +112,39 @@ the change lands in two repositories, and the mirror carries provenance.
 
 ```
 new_skill.py --repo ...
-  -> fill TODOs in the PRODUCT repository
-  -> merge the product pull request FIRST
+  -> fill TODOs in the SOURCE repository
+  -> merge the source pull request FIRST
   -> sync_sources.py --check   (preview)
   -> sync_sources.py           (apply)
   -> generate_catalog.py, validate
   -> commit --signoff, open the SkillHub pull request
 ```
 
-### Scaffold into the product repository
+### Scaffold a new skill into the source repository
+
+Replace the angle-bracket placeholders before running the command. `--repo`
+identifies the source repository; `--owner` records the skill's author or
+maintaining team and need not match the GitHub account name.
 
 ```bash
-python3 scripts/new_skill.py <skill-name>   --source-root ../<product-checkout>   --repo HYGON-AI/<product>   --ref main   --owner "Owning team"   --description "What it does, when it triggers, and the nearest case that must not trigger it."   --license Apache-2.0   --category "Operator Development"   --product-name "Display name"   --product-description "One sentence about the product and its skills."
+python3 scripts/new_skill.py <skill-name> \
+  --source-root ../<source-checkout> \
+  --repo <owner>/<repository> \
+  --ref main \
+  --owner "Author or maintaining team" \
+  --description "What it does, when it triggers, and the nearest case that must not trigger it." \
+  --license Apache-2.0 \
+  --category "Operator Development" \
+  --product-name "Display name" \
+  --product-description "One sentence about the source project and its skills."
 ```
 
-The skill files are written under `<product-checkout>/skills/<skill-name>/`,
+The skill files are written under `<source-checkout>/skills/<skill-name>/`,
 and the registration is written to `components.d/<component>.yml` here.
 
-### Merge the product change first
+### Merge the source change first
 
-Fill in the `TODO` markers in the product repository, then merge that pull
+Fill in the `TODO` markers in the source repository, then merge that pull
 request. Synchronization resolves the registered `ref` to a concrete commit, so
 the content must already be on that ref before the mirror can be applied.
 
@@ -133,8 +154,10 @@ the content must already be on that ref before the mirror can be applied.
 python3 scripts/sync_sources.py --check --component <component>
 ```
 
-The check reports the resolved repository, ref, commit and destination without
-writing anything. Review those before applying:
+The check fetches the source and compares its resolved commit and content with
+the lock and published mirror without writing catalog files. A first import
+with no mirror or lock returns nonzero for expected drift. Review the source
+and registered destination before applying:
 
 ```bash
 python3 scripts/sync_sources.py --component <component>
@@ -142,16 +165,21 @@ python3 scripts/generate_catalog.py
 python3 scripts/validate_skills.py
 python3 scripts/validate_agent_skills_spec.py
 python3 scripts/generate_catalog.py --check
+python3 scripts/sync_sources.py --check --component <component>
 ```
 
 Applying the mirror also writes a `.skillhub-lock.json` entry recording the
 resolved commit and the source-tree SHA-256 digest. Open the SkillHub pull
-request with the owning team as reviewers.
+request with the catalog maintainer as reviewer. Quality Gate, catalog validation
+and DCO must pass before merge. Manually opening a PR does not require GitHub App
+credentials; automated sync PRs require the App configuration described in
+[repository settings](../governance/repository-settings.md). Both paths need the
+quality runner and required branch checks configured for enforced quality review.
 
 ### Rules that differ from the local path
 
 - The mirrored files under `skills/` are generated. Never edit them here: fix
-  the product repository and synchronize again, or the digest check fails.
+  the source repository and synchronize again, or the digest check fails.
 - One repository is registered by exactly one component, and every skill in
   that component shares one `ref`. Skill-level ref overrides are not supported.
 - Synchronization currently runs on manual dispatch only. Admitting the first
@@ -162,7 +190,7 @@ request with the owning team as reviewers.
 
 | Message | Cause |
 | --- | --- |
-| `does not contain SKILL.md` | The product change is not merged on the registered `ref` yet |
+| `does not contain SKILL.md` | The source path is wrong, the skill was deleted, or its change is not on the registered `ref` yet |
 | `drift <name>: published tree does not match resolved source` | A mirrored file was hand-edited here |
 | `remote component requires repo` | `local` is false but no `repo` was given |
 | `source package is not publishable` | The source directory fails the same portability gates |
