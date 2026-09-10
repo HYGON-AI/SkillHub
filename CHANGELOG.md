@@ -25,6 +25,10 @@ here. Generated skill synchronization updates may be grouped by release.
 
 ### Changed
 
+- Local imports now preserve an existing `agents/openai.yaml` or, when absent,
+  generate OpenAI/Codex interface metadata from the Skill name and description.
+  This remains optional Agent-specific metadata and does not change the Agent
+  Skills publication contract.
 - Human-facing product names now consistently use `SkillHub`, and repository
   references use the official `HYGON-AI/SkillHub` casing; stable skill and file
   identifiers remain lowercase.

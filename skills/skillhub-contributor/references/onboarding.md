@@ -14,7 +14,9 @@ scaffolding over it, and review its instructions, resources, runtime requirement
 and permissions after copying. Import always prompts for the SkillHub maintaining
 team unless `--owner` is supplied; a different source author or Skill Card owner
 remains as attribution. Cards default to `published`; this does not bypass content
-review or authorize submission.
+review or authorize submission. An existing `agents/openai.yaml` is preserved;
+when absent, import generates OpenAI/Codex interface metadata from the Skill name
+and description without modifying the source package.
 
 Only when no skill package exists, create one from scratch:
 

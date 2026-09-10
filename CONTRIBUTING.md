@@ -40,7 +40,9 @@ For a condensed walkthrough with the common failure messages, see
 From a SkillHub checkout, import an existing skill directory when one is
 available. This retains the source package and copies its portable resources;
 it does not establish ongoing synchronization. Enter the team responsible for
-maintaining the SkillHub copy; this does not replace source authorship:
+maintaining the SkillHub copy; this does not replace source authorship. The
+importer preserves an existing `agents/openai.yaml`, or generates it from the
+Skill name and description when the source does not provide one:
 
 ```bash
 python3 scripts/contribute.py import ../quality-gate-audit

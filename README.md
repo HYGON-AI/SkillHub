@@ -52,7 +52,9 @@ python3 -m pip install -r requirements-dev.txt
 Create a branch, then prefer importing an existing self-contained skill directory.
 Its `SKILL.md`, references, scripts, assets and bundled license material are
 copied without modifying the source. The command asks who will maintain the
-SkillHub copy; existing source authorship remains preserved separately:
+SkillHub copy; existing source authorship remains preserved separately. An
+existing `agents/openai.yaml` is preserved; when absent, the importer generates
+OpenAI/Codex interface metadata from the Skill name and description:
 
 ```bash
 python3 scripts/contribute.py import ../my-existing-skill

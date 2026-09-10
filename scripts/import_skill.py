@@ -394,6 +394,12 @@ def import_local_skill(args, root, prompt):
         stage_root = Path(temporary)
         candidate = stage_root / config.source_path
         shutil.copytree(source, candidate, symlinks=True)
+        openai_metadata = candidate / "agents" / "openai.yaml"
+        if not openai_metadata.exists():
+            generator.write_text(
+                openai_metadata,
+                generator.render_openai(config, generator.TEMPLATE_ROOT),
+            )
         if source_only:
             generator.write_text(candidate / "SKILL.md", imported_skill)
         inspect_source(candidate)

@@ -114,6 +114,16 @@ class ContributionTests(unittest.TestCase):
                 (destination / "references" / "details.md").read_bytes(),
                 b"source resource\n",
             )
+            openai = yaml.safe_load(
+                (destination / "agents" / "openai.yaml").read_text(encoding="utf-8")
+            )
+            self.assertEqual(openai["interface"]["display_name"], "Imported Example")
+            self.assertEqual(
+                openai["interface"]["short_description"],
+                "Analyze example logs when an example workflow needs diagnosis.",
+            )
+            self.assertIn("$imported-example", openai["interface"]["default_prompt"])
+            self.assertFalse((source / "agents" / "openai.yaml").exists())
             card = (destination / "skill-card.md").read_text(encoding="utf-8")
             self.assertIn("lifecycle: published", card)
             self.assertNotIn("## Validation", card)
@@ -122,6 +132,33 @@ class ContributionTests(unittest.TestCase):
             self.assertIn("owner: Catalog Team", card)
             registry = yaml.safe_load((root / "components.d" / "skillhub.yml").read_text(encoding="utf-8"))
             self.assertEqual(registry["skills"][0]["catalog_dir"], "imported-example")
+
+    def test_import_preserves_existing_openai_metadata(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = self.fixture(temporary)
+            source = self.source_skill(temporary)
+            openai_path = source / "agents" / "openai.yaml"
+            openai_path.parent.mkdir()
+            original = (
+                "interface:\n"
+                "  display_name: Custom imported name\n"
+                "  short_description: Preserve this authored metadata.\n"
+                "  default_prompt: Use $imported-example with the custom workflow.\n"
+                "\n"
+                "policy:\n"
+                "  allow_implicit_invocation: false\n"
+            ).encode("utf-8")
+            openai_path.write_bytes(original)
+            before = self.snapshot(source)
+            code, output = self.invoke(
+                ["import", str(source), "--owner", "Catalog Team", "--category", "Developer Tools", "--non-interactive"], root,
+            )
+            self.assertEqual(code, 0, output)
+            self.assertEqual(before, self.snapshot(source))
+            self.assertEqual(
+                (root / "skills" / "imported-example" / "agents" / "openai.yaml").read_bytes(),
+                original,
+            )
 
     def test_import_prompts_for_catalog_maintainer_despite_source_author(self):
         with tempfile.TemporaryDirectory() as temporary:

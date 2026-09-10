@@ -47,7 +47,11 @@ python3 scripts/contribute.py import ../existing-skill
 `scripts/`, `assets/` and bundled LICENSE/NOTICE material. It does not execute
 source files or modify the source directory. It reuses source metadata where it
 is trustworthy and always changes the imported Skill Card lifecycle to
-`published`. It is a one-time local copy, not upstream synchronization.
+`published`. An existing `agents/openai.yaml` is preserved byte for byte; when
+it is absent, the helper generates OpenAI/Codex interface metadata from the
+Skill name and description. This optional metadata is not an Agent Skills
+publication requirement. Import is a one-time local copy, not upstream
+synchronization.
 
 Import always asks for the **SkillHub maintaining team** unless `--owner` is
 supplied. This records who is responsible for the catalog copy; it does not
