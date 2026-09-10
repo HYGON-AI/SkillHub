@@ -62,7 +62,7 @@ class ComponentOwnerTests(unittest.TestCase):
             component_dir = root / "components.d"
             component_dir.mkdir()
             (component_dir / "skillhub.yml").write_text(
-                "name: skillhub\n"
+                "name: SkillHub\n"
                 "local: true\n"
                 "description: Directly maintained skills.\n"
                 "skills:\n"
@@ -75,7 +75,7 @@ class ComponentOwnerTests(unittest.TestCase):
             component = load_components(root)[0]
 
             self.assertTrue(component["local"])
-            self.assertEqual(component["repo"], "HYGON-AI/skillhub")
+            self.assertEqual(component["repo"], "HYGON-AI/SkillHub")
             self.assertEqual(component["ref"], "main")
 
     def test_local_component_rejects_false_source_repo(self):
@@ -84,7 +84,7 @@ class ComponentOwnerTests(unittest.TestCase):
             component_dir = root / "components.d"
             component_dir.mkdir()
             (component_dir / "skillhub.yml").write_text(
-                "name: skillhub\n"
+                "name: SkillHub\n"
                 "repo: HYGON-AI/not-skillhub\n"
                 "local: true\n"
                 "description: Directly maintained skills.\n"
@@ -459,7 +459,7 @@ class PublicationContractTests(unittest.TestCase):
             (root / "staging").mkdir()
             (root / "components.d").mkdir()
             (root / "components.d" / "skillhub.yml").write_text(
-                "name: skillhub\nlocal: true\ndescription: Local fixture.\nskills:\n"
+                "name: SkillHub\nlocal: true\ndescription: Local fixture.\nskills:\n"
                 f"  - path: skills/{name}\n    catalog_dir: {name}\n"
                 "    category: Developer Tools\n", encoding="utf-8",
             )

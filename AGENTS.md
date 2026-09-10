@@ -2,7 +2,7 @@
 
 - Default to a local skill: create it under `skills/<name>/` here and register it
   with `local: true`. A local component may omit `repo`; when present it must
-  equal `HYGON-AI/skillhub`, and its source path must equal `skills/<name>`.
+  equal `HYGON-AI/SkillHub`, and its source path must equal `skills/<name>`.
 - Treat a remote component as an explicit opt-in for a maintained skill in any
   GitHub owner/repository. Preserve upstream authorship and redistribution rights.
   It requires `repo` and is mirrored by

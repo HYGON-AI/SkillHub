@@ -1,8 +1,8 @@
-# HYGON-AI Agent Skills
+# HYGON-AI SkillHub
 
 <div align="center">
 
-<img src="assets/banner.gif" alt="HYGON skillhub: agent skills for HCU, grouped by governed catalog category" width="1200"/>
+<img src="assets/banner.gif" alt="HYGON SkillHub: agent skills for HCU, grouped by governed catalog category" width="1200"/>
 
 </div>
 
@@ -15,27 +15,27 @@ The default path is simple: **a skill lives in this repository and ships in one 
 After the repository is published, browse or install skills with the standard [`skills` CLI](https://github.com/vercel-labs/skills):
 
 ```bash
-npx skills add HYGON-AI/skillhub --list
-npx skills add HYGON-AI/skillhub
+npx skills add HYGON-AI/SkillHub --list
+npx skills add HYGON-AI/SkillHub
 ```
 
 Install one skill into a specific agent without prompts:
 
 ```bash
-npx skills add HYGON-AI/skillhub --skill skillhub-contributor --agent claude-code --yes
+npx skills add HYGON-AI/SkillHub --skill skillhub-contributor --agent claude-code --yes
 ```
 
 Pass `--agent` more than once to install into several agents, or `--agent '*'`
 for every agent the CLI detects:
 
 ```bash
-npx skills add HYGON-AI/skillhub --skill skillhub-contributor \
+npx skills add HYGON-AI/SkillHub --skill skillhub-contributor \
   --agent claude-code --agent codex --agent cursor --yes
 ```
 
 The pinned CLI installs into any agent it recognizes -- `claude-code`, `codex`,
 `cursor`, `windsurf`, `gemini-cli`, `github-copilot`, `zed`, `trae` and around
-seventy others. Run `npx skills add HYGON-AI/skillhub` without `--agent` to pick
+seventy others. Run `npx skills add HYGON-AI/SkillHub` without `--agent` to pick
 from the agents detected on your machine. Skills in this catalog are portable
 and are not written for one agent.
 
@@ -44,7 +44,7 @@ and are not written for one agent.
 Create a branch, then prefer importing an existing self-contained skill directory.
 Its `SKILL.md`, references, scripts, assets and bundled license material are
 copied without modifying the source. The command asks who will maintain the
-skillhub copy; existing source authorship remains preserved separately:
+SkillHub copy; existing source authorship remains preserved separately:
 
 ```bash
 python3 scripts/contribute.py import ../my-existing-skill
@@ -97,7 +97,7 @@ not contain nested `SKILL.md` files or depend on sibling skills. See the
 
 | Product | Description | Skills |
 |---|---|---|
-| **skillhub** | Author, validate, onboard, and publish portable Agent Skills across HYGON-AI projects. | [`skillhub-contributor`](skills/skillhub-contributor), [`torch-trace-operator-profiler`](skills/torch-trace-operator-profiler) |
+| **SkillHub** | Author, validate, onboard, and publish portable Agent Skills across HYGON-AI projects. | [`skillhub-contributor`](skills/skillhub-contributor), [`torch-trace-operator-profiler`](skills/torch-trace-operator-profiler) |
 
 <!-- catalog:end -->
 
@@ -111,13 +111,13 @@ not contain nested `SKILL.md` files or depend on sibling skills. See the
 
 | Skill | Product | Description |
 |---|---|---|
-| [`skillhub-contributor`](skills/skillhub-contributor) | skillhub | Create, review, and onboard portable Agent Skills into Hygon skillhub. Use when adding a new SKILL.md to the catalog, registering a local or remote component in components.d, preparing a skillhub contribution, or diagnosing catalog validation and synchronization failures. |
+| [`skillhub-contributor`](skills/skillhub-contributor) | SkillHub | Create, review, and onboard portable Agent Skills into HYGON-AI SkillHub. Use when adding a new SKILL.md to the catalog, registering a local or remote component in components.d, preparing a SkillHub contribution, or diagnosing catalog validation and synchronization failures. |
 
 ### Performance and Profiling
 
 | Skill | Product | Description |
 |---|---|---|
-| [`torch-trace-operator-profiler`](skills/torch-trace-operator-profiler) | skillhub | Analyze a torch.profiler Chrome/Perfetto JSON trace to attribute time across Python scopes, ATen operators, GPU kernels, runtime API overhead and memory copies. Use when diagnosing a slow PyTorch operator, custom extension, Triton kernel or submodule from a captured trace. |
+| [`torch-trace-operator-profiler`](skills/torch-trace-operator-profiler) | SkillHub | Analyze a torch.profiler Chrome/Perfetto JSON trace to attribute time across Python scopes, ATen operators, GPU kernels, runtime API overhead and memory copies. Use when diagnosing a slow PyTorch operator, custom extension, Triton kernel or submodule from a captured trace. |
 
 <!-- categories:end -->
 

@@ -13,11 +13,11 @@ removed entries before retrying.
 ## Local component (default)
 
 Set `local: true`. `repo` may be omitted and normalizes to
-`HYGON-AI/skillhub`; any other value is rejected. Each skill's `path` must
+`HYGON-AI/SkillHub`; any other value is rejected. Each skill's `path` must
 equal `skills/<catalog_dir>` exactly:
 
 ```yaml
-name: skillhub
+name: SkillHub
 local: true
 description: Author, validate, onboard, and publish portable Agent Skills across HYGON-AI projects.
 skills:

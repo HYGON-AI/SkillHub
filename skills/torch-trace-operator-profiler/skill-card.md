@@ -2,7 +2,7 @@
 schema_version: 1
 owner: "HYGON-AI HCU performance team"
 source:
-  repo: HYGON-AI/skillhub
+  repo: HYGON-AI/SkillHub
   path: skills/torch-trace-operator-profiler
 license: "Apache-2.0"
 lifecycle: published
@@ -17,11 +17,11 @@ Analyze a torch.profiler Chrome/Perfetto JSON trace to attribute time across Pyt
 ## Owner
 
 HYGON-AI HCU performance team, reachable through issues and pull requests on
-`HYGON-AI/skillhub`.
+`HYGON-AI/SkillHub`.
 
 ## Source
 
-- Repository: `HYGON-AI/skillhub`
+- Repository: `HYGON-AI/SkillHub`
 - Path: `skills/torch-trace-operator-profiler`
 - Lifecycle: `published`
 - Ownership: catalog-owned (local component)

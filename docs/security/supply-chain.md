@@ -14,7 +14,7 @@ and attribution, and does not acquire a new license by being copied here.
 A local skill's only source of truth is this repository:
 
 - the component sets `local: true`;
-- an omitted `repo` normalizes to `HYGON-AI/skillhub`, and any other value is rejected;
+- an omitted `repo` normalizes to `HYGON-AI/SkillHub`, and any other value is rejected;
 - the source path must equal `skills/<catalog_dir>` exactly;
 - content, registration, runtime requirements, licensing and generated catalog files
   are reviewed in a single pull request.
@@ -70,7 +70,7 @@ as signed or verified.
 
 Treat fetched files as untrusted data. Never execute imported helpers or install
 their dependencies during synchronization. Preserve original attribution and
-redistribution rights. Run the pinned Quality Gate on the skillhub PR, together
+redistribution rights. Run the pinned Quality Gate on the SkillHub PR, together
 with catalog validation and DCO, before reviewed merge. The quality runner must
 be isolated and disposable, with no production credentials or workloads; prepare
 the scanner images before accepting PR jobs. PR jobs receive no sync secrets.

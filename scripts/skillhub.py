@@ -16,7 +16,7 @@ import yaml
 
 ROOT = Path(__file__).resolve().parents[1]
 OFFICIAL_GITHUB_OWNER = "HYGON-AI"
-CATALOG_REPO = OFFICIAL_GITHUB_OWNER + "/skillhub"
+CATALOG_REPO = OFFICIAL_GITHUB_OWNER + "/SkillHub"
 CATALOG_REF = "main"
 SKILL_NAME_RE = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
 REPO_RE = re.compile(r"^[A-Za-z0-9](?:[A-Za-z0-9-]*[A-Za-z0-9])?/(?!\.{1,2}$)[A-Za-z0-9_.-]+$")

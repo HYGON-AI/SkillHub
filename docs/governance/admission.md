@@ -36,7 +36,7 @@ Before synchronization or publication, record:
 - Executable helpers are reviewed and tested on representative input.
 - Secret, license, link, file-size and generated-catalog checks pass.
 - For a local skill, the component sets `local: true`, any `repo` equals
-  `HYGON-AI/skillhub`, and the source path equals `skills/<catalog_dir>`.
+  `HYGON-AI/SkillHub`, and the source path equals `skills/<catalog_dir>`.
 - For a remote component, content resolves to a recorded commit in
   `.skillhub-lock.json`.
 - For a remote component, the independently resolved remote tree, recorded

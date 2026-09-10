@@ -1,7 +1,7 @@
 # Repository settings baseline
 
 Workflow files define checks, but they do not make those checks mandatory.
-Before skillhub is treated as a production catalog, an administrator must
+Before SkillHub is treated as a production catalog, an administrator must
 apply and verify the following GitHub settings on the publishing repository.
 
 ## Main branch ruleset

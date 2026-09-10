@@ -323,7 +323,7 @@ class NewSkillTests(unittest.TestCase):
             catalog_root = root / "skillhub"
             (catalog_root / "components.d").mkdir(parents=True)
             (catalog_root / "components.d" / "skillhub.yml").write_text(
-                "name: skillhub\n"
+                "name: SkillHub\n"
                 "local: true\n"
                 "description: Directly maintained skills.\n"
                 "skills:\n"
@@ -354,7 +354,7 @@ class NewSkillTests(unittest.TestCase):
             self.create(config)
 
             self.assertTrue(config.local)
-            self.assertEqual(config.repo, "HYGON-AI/skillhub")
+            self.assertEqual(config.repo, "HYGON-AI/SkillHub")
             self.assertEqual(config.component, "skillhub")
             self.assertEqual(config.destination, catalog_root / "skills" / config.name)
             component = yaml.safe_load(

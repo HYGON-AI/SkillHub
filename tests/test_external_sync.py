@@ -31,7 +31,7 @@ class ExternalSyncTests(unittest.TestCase):
             shutil.copytree(Path(__file__).resolve().parents[1] / "skills" / name, source)
             card = source / "skill-card.md"
             card.write_text(card.read_text(encoding="utf-8").replace(
-                "HYGON-AI/skillhub", "someone/tool-skills"), encoding="utf-8")
+                "HYGON-AI/SkillHub", "someone/tool-skills"), encoding="utf-8")
             registry = catalog / "components.d" / "external.yml"
             registration = (
                 "name: External\nrepo: someone/tool-skills\nref: main\n"

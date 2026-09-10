@@ -293,7 +293,7 @@ class ContributionTests(unittest.TestCase):
                     source = self.source_skill(temporary)
                     component = root / "components.d/skillhub.yml"
                     component.write_text(yaml.safe_dump({
-                        "name": "skillhub", "local": True, "description": "Fixture.", "skills": skills_value,
+                        "name": "SkillHub", "local": True, "description": "Fixture.", "skills": skills_value,
                     }), encoding="utf-8")
                     before = self.snapshot(root)
                     args = ["import", str(source), "--owner", "Catalog Team"] if command == "import" else [

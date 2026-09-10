@@ -1,4 +1,4 @@
-# skillhub documentation
+# SkillHub documentation
 
 This directory contains the maintained contracts for the HYGON-AI skills
 catalog. Root-level documents remain short entry points; detailed policy and

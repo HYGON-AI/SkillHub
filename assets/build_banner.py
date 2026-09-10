@@ -1,6 +1,6 @@
 # Copyright (c) 2026 Hygon Information Technology Co., Ltd.
 # SPDX-License-Identifier: Apache-2.0
-"""Render the HYGON skillhub README banner as an animated trace timeline.
+"""Render the HYGON SkillHub README banner as an animated trace timeline.
 
 The banner is a profiler-style timeline. Blocks are the eleven enforced catalog
 categories -- the stable public surface -- and a playhead sweeps left to right
@@ -58,7 +58,7 @@ N_LANES = 4
 LABEL_PAD_CH = 6  # extra character-widths of breathing room per block
 GAP = 8           # px between blocks
 
-CMD = "npx skills add HYGON-AI/skillhub"
+CMD = "npx skills add HYGON-AI/SkillHub"
 FOOT = "every skill records source and validation"
 
 N_FRAMES = 76
@@ -147,7 +147,7 @@ def draw_frame(i):
     # Header ------------------------------------------------------------
     d.text((px(PAD), px(20)), "HYGON", font=f_title, fill=mix(INK, TXT, intro))
     tw = d.textlength("HYGON", font=f_title)
-    d.text((px(PAD) + tw + px(11), px(20)), "skillhub", font=f_title,
+    d.text((px(PAD) + tw + px(11), px(20)), "SkillHub", font=f_title,
            fill=mix(INK, HYGON_RED, intro))
 
     tag = "agent skills for HCU  ::  one flat catalog, governed categories"

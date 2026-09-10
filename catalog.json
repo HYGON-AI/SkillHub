@@ -4,11 +4,11 @@
   "skills": [
     {
       "name": "skillhub-contributor",
-      "description": "Create, review, and onboard portable Agent Skills into Hygon skillhub. Use when adding a new SKILL.md to the catalog, registering a local or remote component in components.d, preparing a skillhub contribution, or diagnosing catalog validation and synchronization failures.",
+      "description": "Create, review, and onboard portable Agent Skills into HYGON-AI SkillHub. Use when adding a new SKILL.md to the catalog, registering a local or remote component in components.d, preparing a SkillHub contribution, or diagnosing catalog validation and synchronization failures.",
       "category": "Developer Tools",
-      "product": "skillhub",
+      "product": "SkillHub",
       "source": {
-        "repo": "HYGON-AI/skillhub",
+        "repo": "HYGON-AI/SkillHub",
         "ref": "main",
         "path": "skills/skillhub-contributor"
       },
@@ -18,9 +18,9 @@
       "name": "torch-trace-operator-profiler",
       "description": "Analyze a torch.profiler Chrome/Perfetto JSON trace to attribute time across Python scopes, ATen operators, GPU kernels, runtime API overhead and memory copies. Use when diagnosing a slow PyTorch operator, custom extension, Triton kernel or submodule from a captured trace.",
       "category": "Performance and Profiling",
-      "product": "skillhub",
+      "product": "SkillHub",
       "source": {
-        "repo": "HYGON-AI/skillhub",
+        "repo": "HYGON-AI/SkillHub",
         "ref": "main",
         "path": "skills/torch-trace-operator-profiler"
       },
