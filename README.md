@@ -97,7 +97,7 @@ not contain nested `SKILL.md` files or depend on sibling skills. See the
 
 | Product | Description | Skills |
 |---|---|---|
-| **skillhub** | Author, validate, onboard, and publish portable Agent Skills across HYGON-AI projects. | [`audit-hygon-open-source`](skills/audit-hygon-open-source), [`audit-hygon-quality-security`](skills/audit-hygon-quality-security), [`skillhub-contributor`](skills/skillhub-contributor), [`torch-trace-operator-profiler`](skills/torch-trace-operator-profiler) |
+| **skillhub** | Author, validate, onboard, and publish portable Agent Skills across HYGON-AI projects. | [`skillhub-contributor`](skills/skillhub-contributor), [`torch-trace-operator-profiler`](skills/torch-trace-operator-profiler) |
 
 <!-- catalog:end -->
 
@@ -105,20 +105,13 @@ not contain nested `SKILL.md` files or depend on sibling skills. See the
 
 <!-- categories:start -->
 
-4 skills across 3 categories.
+2 skills across 2 categories.
 
 ### Developer Tools
 
 | Skill | Product | Description |
 |---|---|---|
 | [`skillhub-contributor`](skills/skillhub-contributor) | skillhub | Create, review, and onboard portable Agent Skills into Hygon skillhub. Use when adding a new SKILL.md to the catalog, registering a local or remote component in components.d, preparing a skillhub contribution, or diagnosing catalog validation and synchronization failures. |
-
-### Governance and Compliance
-
-| Skill | Product | Description |
-|---|---|---|
-| [`audit-hygon-open-source`](skills/audit-hygon-open-source) | skillhub | Assess repository release readiness by reviewing licensing, notices, source provenance, file metadata, and commit history. Use when preparing a fixed Git revision for distribution or generating a concise Chinese remediation report. |
-| [`audit-hygon-quality-security`](skills/audit-hygon-quality-security) | skillhub | Assess a fixed Git revision for release-readiness quality and security issues, compare against a declared baseline when needed, and generate a concise Chinese remediation report. Use before release to review code quality, dependency risk, workflow integrity, and secret exposure. |
 
 ### Performance and Profiling
 

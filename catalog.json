@@ -3,30 +3,6 @@
   "organization": "HYGON-AI",
   "skills": [
     {
-      "name": "audit-hygon-open-source",
-      "description": "Assess repository release readiness by reviewing licensing, notices, source provenance, file metadata, and commit history. Use when preparing a fixed Git revision for distribution or generating a concise Chinese remediation report.",
-      "category": "Governance and Compliance",
-      "product": "skillhub",
-      "source": {
-        "repo": "HYGON-AI/skillhub",
-        "ref": "main",
-        "path": "skills/audit-hygon-open-source"
-      },
-      "catalog_path": "skills/audit-hygon-open-source"
-    },
-    {
-      "name": "audit-hygon-quality-security",
-      "description": "Assess a fixed Git revision for release-readiness quality and security issues, compare against a declared baseline when needed, and generate a concise Chinese remediation report. Use before release to review code quality, dependency risk, workflow integrity, and secret exposure.",
-      "category": "Governance and Compliance",
-      "product": "skillhub",
-      "source": {
-        "repo": "HYGON-AI/skillhub",
-        "ref": "main",
-        "path": "skills/audit-hygon-quality-security"
-      },
-      "catalog_path": "skills/audit-hygon-quality-security"
-    },
-    {
       "name": "skillhub-contributor",
       "description": "Create, review, and onboard portable Agent Skills into Hygon skillhub. Use when adding a new SKILL.md to the catalog, registering a local or remote component in components.d, preparing a skillhub contribution, or diagnosing catalog validation and synchronization failures.",
       "category": "Developer Tools",

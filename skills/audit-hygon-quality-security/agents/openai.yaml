@@ -1,6 +1,0 @@
-# Copyright (c) 2026 Hygon Information Technology Co., Ltd.
-# SPDX-License-Identifier: Apache-2.0
-interface:
-  display_name: "HYGON 全仓质量安全扫描"
-  short_description: "审查固定提交的质量、安全和发布风险"
-  default_prompt: "使用 $audit-hygon-quality-security 审查固定 Git 提交的质量与安全风险；有基线时执行对比并生成中文整改报告。"

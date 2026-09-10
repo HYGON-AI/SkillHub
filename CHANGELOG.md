@@ -114,6 +114,12 @@ here. Generated skill synchronization updates may be grouped by release.
 - Documentation distinguishes local review evidence from remote commit and
   digest provenance; a local skill has no lock entry and no content digest.
 
+### Removed
+
+- Removed `audit-hygon-open-source` and `audit-hygon-quality-security` from the
+  published catalog because their content did not meet the repository's quality
+  and security requirements.
+
 ### Deferred
 
 - The remote clone, sparse-checkout, digest and lock path remains to be proven
