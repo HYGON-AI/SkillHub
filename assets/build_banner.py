@@ -1,3 +1,5 @@
+# Copyright (c) 2026 Hygon Information Technology Co., Ltd.
+# SPDX-License-Identifier: Apache-2.0
 """Render the HYGON skillhub README banner as an animated trace timeline.
 
 The banner is a profiler-style timeline. Blocks are the eleven enforced catalog
