@@ -323,7 +323,7 @@ class NewSkillTests(unittest.TestCase):
             catalog_root = root / "skillhub"
             (catalog_root / "components.d").mkdir(parents=True)
             (catalog_root / "components.d" / "skillhub.yml").write_text(
-                "name: SkillHub\n"
+                "name: skillhub\n"
                 "local: true\n"
                 "description: Directly maintained skills.\n"
                 "skills:\n"

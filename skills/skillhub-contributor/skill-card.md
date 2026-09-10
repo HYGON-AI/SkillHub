@@ -1,6 +1,6 @@
 ---
 schema_version: 1
-owner: HYGON-AI SkillHub maintainers
+owner: HYGON-AI skillhub maintainers
 source:
   repo: HYGON-AI/skillhub
   path: skills/skillhub-contributor
@@ -17,7 +17,7 @@ skills for the HYGON-AI organization catalog.
 
 ## Owner
 
-HYGON-AI SkillHub maintainers.
+HYGON-AI skillhub maintainers.
 
 ## Source
 
@@ -32,7 +32,7 @@ Apache-2.0. The full license text is bundled in this installed skill directory.
 
 ## Runtime and permissions
 
-Requires a checkout of SkillHub, Python 3.11+, Git, Node.js/npm (CI uses Node 22),
+Requires a checkout of skillhub, Python 3.11+, Git, Node.js/npm (CI uses Node 22),
 and the dependencies in `requirements-dev.txt`. Dependency setup and CLI discovery
 may use the network; registered remote sources are fetched during remote checks.
 Import/new writes skill files and registrations. `contribute.py check` rewrites

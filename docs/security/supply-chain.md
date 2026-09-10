@@ -70,7 +70,7 @@ as signed or verified.
 
 Treat fetched files as untrusted data. Never execute imported helpers or install
 their dependencies during synchronization. Preserve original attribution and
-redistribution rights. Run the pinned Quality Gate on the SkillHub PR, together
+redistribution rights. Run the pinned Quality Gate on the skillhub PR, together
 with catalog validation and DCO, before reviewed merge. The quality runner must
 be isolated and disposable, with no production credentials or workloads; prepare
 the scanner images before accepting PR jobs. PR jobs receive no sync secrets.

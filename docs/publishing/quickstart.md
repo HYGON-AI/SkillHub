@@ -16,7 +16,7 @@ contribute.py import <existing-skill> | new <name> when starting from scratch
 
 ## Preparation (once per checkout)
 
-Run commands from a SkillHub checkout, not from the original skill directory.
+Run commands from a skillhub checkout, not from the original skill directory.
 Use Python 3.11+, Git, and Node.js/npm (CI uses Node.js 22). In PowerShell,
 `python` may be used in place of `python3`.
 
@@ -49,7 +49,7 @@ source files or modify the source directory. It reuses source metadata where it
 is trustworthy and always changes the imported Skill Card lifecycle to
 `published`. It is a one-time local copy, not upstream synchronization.
 
-Import always asks for the **SkillHub maintaining team** unless `--owner` is
+Import always asks for the **skillhub maintaining team** unless `--owner` is
 supplied. This records who is responsible for the catalog copy; it does not
 replace the original author or an existing Skill Card owner, which remain in
 the imported package as attribution. Category and runtime information are only
@@ -160,7 +160,7 @@ are still required.
 
 ### Retrying an existing import
 
-Updating SkillHub's scripts does not rewrite a previously generated Skill Card.
+Updating skillhub's scripts does not rewrite a previously generated Skill Card.
 Prefer editing that local card: remove retired template-only Validation/origin
 lines, retain real authored notes, and complete its runtime information.
 If deliberately starting again, back up the imported directory outside `skills/`
@@ -177,7 +177,7 @@ your source:
 - **Keep an existing skill synchronized:** register and mirror the existing
   package; follow [Import external skills](external-skills.md).
 - **Create a new skill in a source repository:** use the authoring steps below,
-  merge the source change first, then submit the SkillHub import PR.
+  merge the source change first, then submit the skillhub import PR.
 
 An existing upstream package must already meet the publication contract;
 do not scaffold over an existing skill.
@@ -194,7 +194,7 @@ new_skill.py --repo ...
   -> sync_sources.py --check   (preview)
   -> sync_sources.py           (apply)
   -> generate_catalog.py, validate
-  -> commit --signoff, open the SkillHub pull request
+  -> commit --signoff, open the skillhub pull request
 ```
 
 ### Scaffold a new skill into the source repository
@@ -246,7 +246,7 @@ python3 scripts/sync_sources.py --check --component <component>
 ```
 
 Applying the mirror also writes a `.skillhub-lock.json` entry recording the
-resolved commit and the source-tree SHA-256 digest. Open the SkillHub pull
+resolved commit and the source-tree SHA-256 digest. Open the skillhub pull
 request with the catalog maintainer as reviewer. Quality Gate, catalog validation
 and DCO must pass before merge. Manually opening a PR does not require GitHub App
 credentials; automated sync PRs require the App configuration described in

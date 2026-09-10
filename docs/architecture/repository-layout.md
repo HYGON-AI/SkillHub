@@ -2,7 +2,7 @@
 
 ## Design goals
 
-HYGON-AI SkillHub separates authored content, admission review, published
+HYGON-AI skillhub separates authored content, admission review, published
 content, generated metadata and validation records. A skill is local by
 default: it lives here and is registered with `local: true`. Mirroring from a
 product repository is an explicit opt-in, and the separation prevents such a

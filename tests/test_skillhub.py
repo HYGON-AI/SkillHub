@@ -62,7 +62,7 @@ class ComponentOwnerTests(unittest.TestCase):
             component_dir = root / "components.d"
             component_dir.mkdir()
             (component_dir / "skillhub.yml").write_text(
-                "name: SkillHub\n"
+                "name: skillhub\n"
                 "local: true\n"
                 "description: Directly maintained skills.\n"
                 "skills:\n"
@@ -84,7 +84,7 @@ class ComponentOwnerTests(unittest.TestCase):
             component_dir = root / "components.d"
             component_dir.mkdir()
             (component_dir / "skillhub.yml").write_text(
-                "name: SkillHub\n"
+                "name: skillhub\n"
                 "repo: HYGON-AI/not-skillhub\n"
                 "local: true\n"
                 "description: Directly maintained skills.\n"
@@ -459,7 +459,7 @@ class PublicationContractTests(unittest.TestCase):
             (root / "staging").mkdir()
             (root / "components.d").mkdir()
             (root / "components.d" / "skillhub.yml").write_text(
-                "name: SkillHub\nlocal: true\ndescription: Local fixture.\nskills:\n"
+                "name: skillhub\nlocal: true\ndescription: Local fixture.\nskills:\n"
                 f"  - path: skills/{name}\n    catalog_dir: {name}\n"
                 "    category: Developer Tools\n", encoding="utf-8",
             )

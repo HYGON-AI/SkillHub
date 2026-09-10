@@ -176,10 +176,10 @@ def validate_config(config):
             f"catalog root does not contain components.d: {config.catalog_root}"
         )
     if config.local and config.source_root.resolve() != config.catalog_root.resolve():
-        raise ScaffoldError("local skills must be created in the SkillHub checkout")
+        raise ScaffoldError("local skills must be created in the skillhub checkout")
     if not config.local and config.source_root.resolve() == config.catalog_root.resolve():
         raise ScaffoldError(
-            "remote product skills must use a product repository outside SkillHub"
+            "remote product skills must use a product repository outside skillhub"
         )
     if config.license_file is not None and (not config.license_file.is_file() or config.license_file.stat().st_size == 0):
         raise ScaffoldError("license file must be a non-empty file")
@@ -524,7 +524,7 @@ def create_scaffold(config, template_root=TEMPLATE_ROOT):
         "NEXT: complete the skill instructions and review the generated Skill Card; lifecycle is already published."
     )
     if config.local:
-        print("NEXT: generate the catalog, validate, and submit one SkillHub pull request.")
+        print("NEXT: generate the catalog, validate, and submit one skillhub pull request.")
     else:
         print(
             "NEXT: merge the source-repository change before synchronizing this component."
@@ -539,7 +539,7 @@ def parse_args(argv=None):
     parser.add_argument(
         "--local",
         action="store_true",
-        help="create the skill directly in SkillHub (the default when --repo is omitted)",
+        help="create the skill directly in skillhub (the default when --repo is omitted)",
     )
     parser.add_argument(
         "--repo",
@@ -589,7 +589,7 @@ def parse_args(argv=None):
     parser.add_argument(
         "--catalog-root",
         default=str(CATALOG_ROOT),
-        help="SkillHub checkout containing components.d and templates",
+        help="skillhub checkout containing components.d and templates",
     )
     parser.add_argument(
         "--with-openai", action="store_true", help="create agents/openai.yaml"
@@ -646,13 +646,13 @@ def config_from_args(args):
         local=local,
         component=component,
         product_name=require_text(
-            args.product_name or ("SkillHub" if local else display_name(component)),
+            args.product_name or ("skillhub" if local else display_name(component)),
             "product name",
         ),
         product_description=require_text(
             args.product_description
             or (
-                "Directly maintained HYGON-AI SkillHub skills."
+                "Directly maintained HYGON-AI skillhub skills."
                 if local
                 else args.description
             ),
