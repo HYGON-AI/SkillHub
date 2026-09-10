@@ -1,20 +1,20 @@
 # Skills from another repository
 
-HYGON-AI Agent Skills accepts skills from GitHub organizations and personal repositories.
+SkillHub accepts skills from GitHub organizations and personal repositories.
 The default is a one-time local import: it preserves the source package but
-makes the reviewed copy a catalog-maintained skill. Ongoing synchronization is
+makes the reviewed copy a SkillHub-maintained skill. Ongoing synchronization is
 an explicit advanced option.
 
 ## Default: one-time local import
 
-Clone or otherwise obtain the source directory, then run this from a catalog
+Clone or otherwise obtain the source directory, then run this from a SkillHub
 contribution branch:
 
 ```bash
 python3 scripts/contribute.py import ../upstream-skill
 ```
 
-The interactive import asks for the team that will maintain the catalog copy,
+The interactive import asks for the team that will maintain the SkillHub copy,
 even when the source already records an author or owner. This catalog maintainer
 does not replace the preserved source attribution. Pass `--owner` to provide it
 non-interactively.
@@ -85,7 +85,7 @@ that remote mirror path.
    match the Skill's frontmatter `name`. Skill Card source
    metadata must match the registered repository and source path. One component
    registers one repository and one ref.
-3. Import and validate from the catalog root:
+3. Import and validate from the SkillHub root:
 
    ```bash
    python scripts/sync_sources.py --component tool-skills
@@ -100,7 +100,7 @@ that remote mirror path.
    Apply mode creates the mirror and lock entry. `--check` reports drift and
    exits nonzero for a first import without a mirror/lock; that is expected.
    Follow CONTRIBUTING's normal and full-depth CLI discovery checks as well.
-4. Commit with sign-off and open a catalog PR containing the registration,
+4. Commit with sign-off and open a SkillHub PR containing the registration,
    mirror, `.skillhub-lock.json` and generated catalog files. Quality Gate,
    catalog validation and DCO must pass, followed by maintainer review.
    Do not merge a source-only registration before its mirror and lock.

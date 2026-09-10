@@ -1,4 +1,4 @@
-"""Render the HYGON-AI Agent Skills README banner as an animated trace timeline.
+"""Render the HYGON SkillHub README banner as an animated trace timeline.
 
 The banner is a profiler-style timeline. Blocks are the eleven enforced catalog
 categories -- the stable public surface -- and a playhead sweeps left to right
@@ -143,9 +143,9 @@ def draw_frame(i):
     intro = ease(i / 9.0)
 
     # Header ------------------------------------------------------------
-    d.text((px(PAD), px(20)), "HYGON-AI", font=f_title, fill=mix(INK, TXT, intro))
-    tw = d.textlength("HYGON-AI", font=f_title)
-    d.text((px(PAD) + tw + px(11), px(20)), "Agent Skills", font=f_title,
+    d.text((px(PAD), px(20)), "HYGON", font=f_title, fill=mix(INK, TXT, intro))
+    tw = d.textlength("HYGON", font=f_title)
+    d.text((px(PAD) + tw + px(11), px(20)), "SkillHub", font=f_title,
            fill=mix(INK, HYGON_RED, intro))
 
     tag = "agent skills for HCU  ::  one flat catalog, governed categories"

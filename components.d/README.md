@@ -17,7 +17,7 @@ Set `local: true`. `repo` may be omitted and normalizes to
 equal `skills/<catalog_dir>` exactly:
 
 ```yaml
-name: HYGON-AI Agent Skills
+name: SkillHub
 local: true
 description: Author, validate, onboard, and publish portable Agent Skills across HYGON-AI projects.
 skills:

@@ -6,7 +6,7 @@
       "name": "audit-hygon-open-source",
       "description": "Assess repository release readiness by reviewing licensing, notices, source provenance, file metadata, and commit history. Use when preparing a fixed Git revision for distribution or generating a concise Chinese remediation report.",
       "category": "Governance and Compliance",
-      "product": "HYGON-AI Agent Skills",
+      "product": "SkillHub",
       "source": {
         "repo": "HYGON-AI/skillhub",
         "ref": "main",
@@ -18,7 +18,7 @@
       "name": "audit-hygon-quality-security",
       "description": "Assess a fixed Git revision for release-readiness quality and security issues, compare against a declared baseline when needed, and generate a concise Chinese remediation report. Use before release to review code quality, dependency risk, workflow integrity, and secret exposure.",
       "category": "Governance and Compliance",
-      "product": "HYGON-AI Agent Skills",
+      "product": "SkillHub",
       "source": {
         "repo": "HYGON-AI/skillhub",
         "ref": "main",
@@ -28,9 +28,9 @@
     },
     {
       "name": "skillhub-contributor",
-      "description": "Create, review, and onboard portable Agent Skills into the HYGON-AI Agent Skills catalog. Use when adding a new SKILL.md, registering a local or remote component in components.d, preparing a catalog contribution, or diagnosing validation and synchronization failures.",
+      "description": "Create, review, and onboard portable Agent Skills into Hygon SkillHub. Use when adding a new SKILL.md to the catalog, registering a local or remote component in components.d, preparing a SkillHub contribution, or diagnosing catalog validation and synchronization failures.",
       "category": "Developer Tools",
-      "product": "HYGON-AI Agent Skills",
+      "product": "SkillHub",
       "source": {
         "repo": "HYGON-AI/skillhub",
         "ref": "main",
@@ -42,7 +42,7 @@
       "name": "torch-trace-operator-profiler",
       "description": "Analyze a torch.profiler Chrome/Perfetto JSON trace to attribute time across Python scopes, ATen operators, GPU kernels, runtime API overhead and memory copies. Use when diagnosing a slow PyTorch operator, custom extension, Triton kernel or submodule from a captured trace.",
       "category": "Performance and Profiling",
-      "product": "HYGON-AI Agent Skills",
+      "product": "SkillHub",
       "source": {
         "repo": "HYGON-AI/skillhub",
         "ref": "main",

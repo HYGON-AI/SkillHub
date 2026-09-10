@@ -2,7 +2,7 @@
 
 <div align="center">
 
-<img src="assets/banner.gif" alt="HYGON-AI Agent Skills: portable skills for HCU, grouped by governed catalog category" width="1200"/>
+<img src="assets/banner.gif" alt="HYGON SkillHub: agent skills for HCU, grouped by governed catalog category" width="1200"/>
 
 </div>
 
@@ -44,7 +44,7 @@ and are not written for one agent.
 Create a branch, then prefer importing an existing self-contained skill directory.
 Its `SKILL.md`, references, scripts, assets and bundled license material are
 copied without modifying the source. The command asks who will maintain the
-catalog copy; existing source authorship remains preserved separately:
+SkillHub copy; existing source authorship remains preserved separately:
 
 ```bash
 python3 scripts/contribute.py import ../my-existing-skill
@@ -97,7 +97,7 @@ not contain nested `SKILL.md` files or depend on sibling skills. See the
 
 | Product | Description | Skills |
 |---|---|---|
-| **HYGON-AI Agent Skills** | Author, validate, onboard, and publish portable Agent Skills across HYGON-AI projects. | [`audit-hygon-open-source`](skills/audit-hygon-open-source), [`audit-hygon-quality-security`](skills/audit-hygon-quality-security), [`skillhub-contributor`](skills/skillhub-contributor), [`torch-trace-operator-profiler`](skills/torch-trace-operator-profiler) |
+| **SkillHub** | Author, validate, onboard, and publish portable Agent Skills across HYGON-AI projects. | [`audit-hygon-open-source`](skills/audit-hygon-open-source), [`audit-hygon-quality-security`](skills/audit-hygon-quality-security), [`skillhub-contributor`](skills/skillhub-contributor), [`torch-trace-operator-profiler`](skills/torch-trace-operator-profiler) |
 
 <!-- catalog:end -->
 
@@ -111,20 +111,20 @@ not contain nested `SKILL.md` files or depend on sibling skills. See the
 
 | Skill | Product | Description |
 |---|---|---|
-| [`skillhub-contributor`](skills/skillhub-contributor) | HYGON-AI Agent Skills | Create, review, and onboard portable Agent Skills into the HYGON-AI Agent Skills catalog. Use when adding a new SKILL.md, registering a local or remote component in components.d, preparing a catalog contribution, or diagnosing validation and synchronization failures. |
+| [`skillhub-contributor`](skills/skillhub-contributor) | SkillHub | Create, review, and onboard portable Agent Skills into Hygon SkillHub. Use when adding a new SKILL.md to the catalog, registering a local or remote component in components.d, preparing a SkillHub contribution, or diagnosing catalog validation and synchronization failures. |
 
 ### Governance and Compliance
 
 | Skill | Product | Description |
 |---|---|---|
-| [`audit-hygon-open-source`](skills/audit-hygon-open-source) | HYGON-AI Agent Skills | Assess repository release readiness by reviewing licensing, notices, source provenance, file metadata, and commit history. Use when preparing a fixed Git revision for distribution or generating a concise Chinese remediation report. |
-| [`audit-hygon-quality-security`](skills/audit-hygon-quality-security) | HYGON-AI Agent Skills | Assess a fixed Git revision for release-readiness quality and security issues, compare against a declared baseline when needed, and generate a concise Chinese remediation report. Use before release to review code quality, dependency risk, workflow integrity, and secret exposure. |
+| [`audit-hygon-open-source`](skills/audit-hygon-open-source) | SkillHub | Assess repository release readiness by reviewing licensing, notices, source provenance, file metadata, and commit history. Use when preparing a fixed Git revision for distribution or generating a concise Chinese remediation report. |
+| [`audit-hygon-quality-security`](skills/audit-hygon-quality-security) | SkillHub | Assess a fixed Git revision for release-readiness quality and security issues, compare against a declared baseline when needed, and generate a concise Chinese remediation report. Use before release to review code quality, dependency risk, workflow integrity, and secret exposure. |
 
 ### Performance and Profiling
 
 | Skill | Product | Description |
 |---|---|---|
-| [`torch-trace-operator-profiler`](skills/torch-trace-operator-profiler) | HYGON-AI Agent Skills | Analyze a torch.profiler Chrome/Perfetto JSON trace to attribute time across Python scopes, ATen operators, GPU kernels, runtime API overhead and memory copies. Use when diagnosing a slow PyTorch operator, custom extension, Triton kernel or submodule from a captured trace. |
+| [`torch-trace-operator-profiler`](skills/torch-trace-operator-profiler) | SkillHub | Analyze a torch.profiler Chrome/Perfetto JSON trace to attribute time across Python scopes, ATen operators, GPU kernels, runtime API overhead and memory copies. Use when diagnosing a slow PyTorch operator, custom extension, Triton kernel or submodule from a captured trace. |
 
 <!-- categories:end -->
 
