@@ -292,7 +292,7 @@ def render_skill_card(config, template_root):
 
 def render_openai(config, template_root):
     text = read_template(template_root, "agents/openai.yaml.template")
-    short_description = " ".join(config.description.split())[:160]
+    short_description = " ".join(config.description.split())[:100]
     replacements = {
         '"Replace with user-facing name"': json.dumps(
             display_name(config.name), ensure_ascii=False

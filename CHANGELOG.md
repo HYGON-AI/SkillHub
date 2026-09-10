@@ -27,6 +27,7 @@ here. Generated skill synchronization updates may be grouped by release.
 
 - Local imports now preserve an existing `agents/openai.yaml` or, when absent,
   generate OpenAI/Codex interface metadata from the Skill name and description.
+  Generated short descriptions respect the validator's 100-character limit.
   This remains optional Agent-specific metadata and does not change the Agent
   Skills publication contract.
 - Human-facing product names now consistently use `SkillHub`, and repository

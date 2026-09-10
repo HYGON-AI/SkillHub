@@ -160,6 +160,30 @@ class ContributionTests(unittest.TestCase):
                 original,
             )
 
+    def test_import_truncates_generated_openai_description_to_validator_limit(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = self.fixture(temporary)
+            source = self.source_skill(temporary)
+            long_description = "x" * 102
+            skill_path = source / "SKILL.md"
+            skill_path.write_text(
+                skill_path.read_text(encoding="utf-8").replace(
+                    "Analyze example logs when an example workflow needs diagnosis.",
+                    long_description,
+                ),
+                encoding="utf-8",
+            )
+            code, output = self.invoke(
+                ["import", str(source), "--owner", "Catalog Team", "--category", "Developer Tools", "--non-interactive"], root,
+            )
+            self.assertEqual(code, 0, output)
+            openai = yaml.safe_load(
+                (root / "skills" / "imported-example" / "agents" / "openai.yaml").read_text(
+                    encoding="utf-8"
+                )
+            )
+            self.assertEqual(openai["interface"]["short_description"], "x" * 100)
+
     def test_import_prompts_for_catalog_maintainer_despite_source_author(self):
         with tempfile.TemporaryDirectory() as temporary:
             root = self.fixture(temporary)
