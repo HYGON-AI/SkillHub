@@ -41,6 +41,14 @@ and are not written for one agent.
 
 ## Add a skill
 
+From the repository root, install the development dependencies once per
+checkout using Python 3.11+. On Windows, use `python` in place of `python3` if
+needed:
+
+```bash
+python3 -m pip install -r requirements-dev.txt
+```
+
 Create a branch, then prefer importing an existing self-contained skill directory.
 Its `SKILL.md`, references, scripts, assets and bundled license material are
 copied without modifying the source. The command asks who will maintain the
