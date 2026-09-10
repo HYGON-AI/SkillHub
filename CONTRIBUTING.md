@@ -1,6 +1,6 @@
 # Contributing
 
-Hygon SkillHub is a publication catalog. By default a skill lives here and ships
+HYGON-AI Agent Skills is a publication catalog. By default a skill lives here and ships
 in one pull request. Mirroring from a product repository stays available as an
 explicit opt-in, for teams that want a skill to evolve alongside the code it
 documents.
@@ -28,7 +28,7 @@ administrators must apply and verify the
 
 ## Publication boundary
 
-SkillHub accepts maintained skills from any GitHub organization or personal repository. Every imported skill needs a catalog maintainer, permission for public redistribution, accurate source metadata and the same quality gates as local skills.
+The catalog accepts maintained skills from any GitHub organization or personal repository. Every imported skill needs a catalog maintainer, permission for public redistribution, accurate source metadata and the same quality gates as local skills.
 
 Third-party skills may be mirrored unchanged when their license permits it and their package meets admission requirements. Preserve original authorship, copyright, license and NOTICE; do not present catalog inclusion as HYGON authorship or an HCU adaptation. For an existing upstream skill, follow the [external import guide](docs/publishing/external-skills.md); no upstream PR is needed if the package is already complete.
 
@@ -37,10 +37,10 @@ Third-party skills may be mirrored unchanged when their license permits it and t
 For a condensed walkthrough with the common failure messages, see
 [Add a skill: quick start](docs/publishing/quickstart.md).
 
-From a SkillHub checkout, import an existing skill directory when one is
+From a HYGON-AI Agent Skills checkout, import an existing skill directory when one is
 available. This retains the source package and copies its portable resources;
 it does not establish ongoing synchronization. Enter the team responsible for
-maintaining the SkillHub copy; this does not replace source authorship:
+maintaining the catalog copy; this does not replace source authorship:
 
 ```bash
 python3 scripts/contribute.py import ../quality-gate-audit
@@ -163,7 +163,7 @@ resources; this catalog does not execute or impose a dataset schema on them.
 
 ## Add a catalog-owned staging prototype
 
-Use `staging/` for a SkillHub-wide workflow that is not ready for admission.
+Use `staging/` for a catalog-wide workflow that is not ready for admission.
 Write the entrypoint as `SKILL.md.candidate` and complete the same admission
 evidence as any other skill. Promotion is a reviewed change that moves the
 candidate to `skills/`, renames the entrypoint to `SKILL.md`, registers it with

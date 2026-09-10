@@ -19,7 +19,7 @@ from scripts.new_skill import (
     license_mismatch_warning,
     parse_args,
 )
-from scripts.skillhub import validate_markdown_links
+from scripts.skillhub import CATALOG_DISPLAY_NAME, validate_markdown_links
 
 
 class NewSkillTests(unittest.TestCase):
@@ -356,6 +356,7 @@ class NewSkillTests(unittest.TestCase):
             self.assertTrue(config.local)
             self.assertEqual(config.repo, "HYGON-AI/skillhub")
             self.assertEqual(config.component, "skillhub")
+            self.assertEqual(config.product_name, CATALOG_DISPLAY_NAME)
             self.assertEqual(config.destination, catalog_root / "skills" / config.name)
             component = yaml.safe_load(
                 (catalog_root / "components.d" / "skillhub.yml").read_text(

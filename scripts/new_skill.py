@@ -17,6 +17,7 @@ import yaml
 try:
     from scripts.skillhub import (
         ALLOWED_CATEGORIES,
+        CATALOG_DISPLAY_NAME,
         CATALOG_REPO,
         FORBIDDEN_GENERIC_CATALOG_DIRS,
         MAX_DESCRIPTION_LENGTH,
@@ -27,6 +28,7 @@ try:
 except ModuleNotFoundError:  # Direct execution adds scripts/, not the repository root.
     from skillhub import (
         ALLOWED_CATEGORIES,
+        CATALOG_DISPLAY_NAME,
         CATALOG_REPO,
         FORBIDDEN_GENERIC_CATALOG_DIRS,
         MAX_DESCRIPTION_LENGTH,
@@ -176,10 +178,10 @@ def validate_config(config):
             f"catalog root does not contain components.d: {config.catalog_root}"
         )
     if config.local and config.source_root.resolve() != config.catalog_root.resolve():
-        raise ScaffoldError("local skills must be created in the SkillHub checkout")
+        raise ScaffoldError("local skills must be created in the catalog checkout")
     if not config.local and config.source_root.resolve() == config.catalog_root.resolve():
         raise ScaffoldError(
-            "remote product skills must use a product repository outside SkillHub"
+            "remote product skills must use a product repository outside the catalog"
         )
     if config.license_file is not None and (not config.license_file.is_file() or config.license_file.stat().st_size == 0):
         raise ScaffoldError("license file must be a non-empty file")
@@ -524,7 +526,7 @@ def create_scaffold(config, template_root=TEMPLATE_ROOT):
         "NEXT: complete the skill instructions and review the generated Skill Card; lifecycle is already published."
     )
     if config.local:
-        print("NEXT: generate the catalog, validate, and submit one SkillHub pull request.")
+        print("NEXT: generate the catalog, validate, and submit one catalog pull request.")
     else:
         print(
             "NEXT: merge the source-repository change before synchronizing this component."
@@ -539,7 +541,7 @@ def parse_args(argv=None):
     parser.add_argument(
         "--local",
         action="store_true",
-        help="create the skill directly in SkillHub (the default when --repo is omitted)",
+        help="create the skill directly in the catalog (the default when --repo is omitted)",
     )
     parser.add_argument(
         "--repo",
@@ -589,7 +591,7 @@ def parse_args(argv=None):
     parser.add_argument(
         "--catalog-root",
         default=str(CATALOG_ROOT),
-        help="SkillHub checkout containing components.d and templates",
+        help="catalog checkout containing components.d and templates",
     )
     parser.add_argument(
         "--with-openai", action="store_true", help="create agents/openai.yaml"
@@ -646,13 +648,13 @@ def config_from_args(args):
         local=local,
         component=component,
         product_name=require_text(
-            args.product_name or ("SkillHub" if local else display_name(component)),
+            args.product_name or (CATALOG_DISPLAY_NAME if local else display_name(component)),
             "product name",
         ),
         product_description=require_text(
             args.product_description
             or (
-                "Directly maintained HYGON-AI SkillHub skills."
+                "Directly maintained HYGON-AI Agent Skills catalog."
                 if local
                 else args.description
             ),

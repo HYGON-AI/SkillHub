@@ -16,6 +16,7 @@ ROOT = Path(__file__).resolve().parents[1]
 OFFICIAL_GITHUB_OWNER = "HYGON-AI"
 CATALOG_REPO = OFFICIAL_GITHUB_OWNER + "/skillhub"
 CATALOG_REF = "main"
+CATALOG_DISPLAY_NAME = "HYGON-AI Agent Skills"
 SKILL_NAME_RE = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
 REPO_RE = re.compile(r"^[A-Za-z0-9](?:[A-Za-z0-9-]*[A-Za-z0-9])?/(?!\.{1,2}$)[A-Za-z0-9_.-]+$")
 REF_RE = re.compile(r"^[A-Za-z0-9._/-]+$")

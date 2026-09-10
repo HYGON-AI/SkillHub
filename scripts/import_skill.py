@@ -259,7 +259,7 @@ def validate_prepared(stage_root, config):
         stage_root / "components.d" / "skillhub.yml",
         yaml.safe_dump(
             {
-                "name": "SkillHub",
+                "name": catalog.CATALOG_DISPLAY_NAME,
                 "local": True,
                 "description": "Local import validation fixture.",
                 "skills": [{
@@ -366,8 +366,8 @@ def import_local_skill(args, root, prompt):
         category=category,
         local=True,
         component="skillhub",
-        product_name="SkillHub",
-        product_description="Directly maintained HYGON-AI SkillHub skills.",
+        product_name=catalog.CATALOG_DISPLAY_NAME,
+        product_description="Directly maintained HYGON-AI Agent Skills catalog.",
         source_root=root,
         catalog_root=root,
         license_file=license_file,
