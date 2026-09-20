@@ -7,6 +7,15 @@ here. Generated skill synchronization updates may be grouped by release.
 
 ### Added
 
+- Opt-in daily remote synchronization at 01:17 UTC, gated by
+  `SKILLHUB_SYNC_ENABLED=true` after manual acceptance and App configuration.
+- `sync_sources.py --check --locked` verifies the reviewed commit without
+  requiring the upstream branch to remain unchanged. PR and contribution checks
+  use this mode; plain `--check` remains a latest-ref drift check.
+- Multi-source preparation before publication, with rollback on publication
+  write errors. Process termination and rollback filesystem failures are not
+  covered by this recovery guarantee.
+
 - A local contribution helper with `new`, `import` and `check` commands. It
   scaffolds or copies one local skill package and runs the existing repository
   gates without creating branches, staging files, committing, pushing or
@@ -114,9 +123,8 @@ here. Generated skill synchronization updates may be grouped by release.
   `skills/<catalog_dir>`.
 - Name, ref, commit and digest patterns are matched with `fullmatch`, so a
   trailing newline can no longer pass a bounded-pattern check.
-- Remote synchronization runs on manual dispatch only. Admitting the first
-  remote component requires an explicit decision on whether to restore
-  scheduled synchronization and at what frequency.
+- Remote synchronization retains manual dispatch; scheduled runs require
+  explicit activation after manual acceptance.
 - Documentation distinguishes local review evidence from remote commit and
   digest provenance; a local skill has no lock entry and no content digest.
 
@@ -128,6 +136,8 @@ here. Generated skill synchronization updates may be grouped by release.
 
 ### Deferred
 
-- The remote clone, sparse-checkout, digest and lock path remains to be proven
-  with the first admitted product-owned skill; local-only validation does not
-  establish that evidence.
+- App-authored synchronization PRs and the first scheduled run still require
+  deployment acceptance. The public demonstration source exercises initial and
+  incremental GitHub synchronization, not production product-skill behavior.
+- Semantic overlap review is planned as an advisory Chat API report for local
+  and remote contributions. No model integration or semantic gate is enabled.

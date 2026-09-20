@@ -190,7 +190,7 @@ def check_catalog(args, root):
         ("Catalog policy", ["scripts/validate_skills.py"]),
         ("Agent Skills specification", ["scripts/validate_agent_skills_spec.py"]),
         ("Generated catalog consistency", ["scripts/generate_catalog.py", "--check"]),
-        ("Remote provenance", ["scripts/sync_sources.py", "--check"]),
+        ("Remote provenance", ["scripts/sync_sources.py", "--check", "--locked"]),
     )
     for number, (label, arguments) in enumerate(stages, 1):
         print(f"[{number}/8] {label}", flush=True)

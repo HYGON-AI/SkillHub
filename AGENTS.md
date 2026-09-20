@@ -16,6 +16,10 @@
   entrypoints use `SKILL.md.candidate`; reject every real `SKILL.md` below it.
   Remote product candidates stay in their product repositories.
 - Do not hand-edit a remotely mirrored skill. Change its product repository and synchronize it.
+- For remote provenance use `sync_sources.py --check --locked`; plain `--check`
+  checks latest-ref drift. Do not require an unrelated PR to chase upstream HEAD.
+- Scheduled sync is opt-in via `SKILLHUB_SYNC_ENABLED=true`, after manual App/PR
+  acceptance. Never enable scheduling or merge sync PRs without user approval.
 - Keep the published catalog flat: one direct child of `skills/` is one skill, with no nested `SKILL.md`.
 - Use `templates/skill/` for new contributions; template suffixes prevent accidental discovery.
 - Require `skill-card.md` and the applicable license material before publication.

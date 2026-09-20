@@ -80,10 +80,11 @@ Before announcing the catalog endpoint, an administrator records evidence that:
 4. a private vulnerability report can be submitted without opening a public
    issue; and
 5. the synchronization workflow can open a signed-off pull request but cannot
-   merge it by itself. Synchronization currently runs on manual dispatch only;
-   when the first remote component is admitted, an administrator must record
-   explicitly whether to restore scheduled synchronization and at what
-   frequency.
+   merge it by itself. Run manual acceptance first, then set repository variable
+   `SKILLHUB_SYNC_ENABLED=true` to enable daily 01:17 UTC synchronization.
+   Missing/false disables scheduled jobs but retains manual dispatch. Confirm
+   the App-authored PR starts all checks before enabling. Record the first
+   actual scheduled run; committing a schedule is not deployment evidence.
 
 Repository settings are external state. Review them periodically and after a
 repository transfer, fork promotion, workflow rename, or default-branch change.

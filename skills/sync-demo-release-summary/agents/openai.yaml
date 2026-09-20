@@ -1,0 +1,7 @@
+interface:
+  display_name: "Sync Demo Release Summary"
+  short_description: "Draft release notes for a synchronization demo"
+  default_prompt: "Use $sync-demo-release-summary to summarize the public changes I provide."
+
+policy:
+  allow_implicit_invocation: true

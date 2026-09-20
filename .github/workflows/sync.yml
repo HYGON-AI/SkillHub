@@ -2,16 +2,19 @@ name: Sync Opt-in Product Skills
 
 on:
   workflow_dispatch:
+  schedule:
+    - cron: '17 1 * * *'
 
 permissions:
   contents: read
 
 concurrency:
   group: sync-opt-in-product-skills
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
   sync:
+    if: github.event_name == 'workflow_dispatch' || vars.SKILLHUB_SYNC_ENABLED == 'true'
     runs-on: ubuntu-latest
     steps:
       - name: Require synchronization App configuration
@@ -54,7 +57,7 @@ jobs:
           python scripts/validate_skills.py
           python scripts/validate_agent_skills_spec.py
           python scripts/generate_catalog.py --check
-          python scripts/sync_sources.py --check
+          python scripts/sync_sources.py --check --locked
       - name: Open or update synchronization pull request
         env:
           GH_TOKEN: ${{ steps.app-token.outputs.token }}
@@ -71,6 +74,13 @@ jobs:
           git add skills catalog.json skills.sh.json README.md .skillhub-lock.json
           git commit --signoff -m "chore(skills): sync registered sources"
           expected=$(git ls-remote origin "refs/heads/$branch" | cut -f1)
+          if [ -n "$expected" ]; then
+            git fetch origin "$expected"
+            if git diff --quiet "$expected" HEAD; then
+              echo "Existing synchronization branch already contains this update."
+              exit 0
+            fi
+          fi
           git push --force-with-lease="refs/heads/$branch:$expected" origin "$branch"
           gh pr create --base main --head "$branch" --title "chore(skills): sync registered sources" --body "Update registered GitHub skill mirrors. Quality, catalog and DCO checks plus maintainer review are required before merge." || \
             gh pr edit "$branch" --title "chore(skills): sync registered sources" --body "Update registered GitHub skill mirrors. Quality, catalog and DCO checks plus maintainer review are required before merge."

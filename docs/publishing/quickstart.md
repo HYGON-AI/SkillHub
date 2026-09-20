@@ -263,9 +263,10 @@ quality runner and required branch checks configured for enforced quality review
   the source repository and synchronize again, or the digest check fails.
 - One repository is registered by exactly one component, and every skill in
   that component shares one `ref`. Skill-level ref overrides are not supported.
-- Synchronization currently runs on manual dispatch only. Admitting the first
-  remote component requires an explicit decision on whether to restore
-  scheduled synchronization and at what frequency.
+- Synchronization supports manual dispatch and daily 01:17 UTC runs, gated by
+  `SKILLHUB_SYNC_ENABLED=true` after manual acceptance and App configuration.
+  PR checks use `sync_sources.py --check --locked` to verify recorded commits;
+  plain `--check` detects changes in the current upstream ref.
 
 ### Additional failures
 

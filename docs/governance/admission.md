@@ -66,6 +66,17 @@ reasons, and candidates simultaneously registered for publication are rejected.
 An exception is not a waiver and must never cause a failing skill to appear in
 `skills/`.
 
+## Planned semantic overlap review (not implemented)
+
+The proposed first version compares added/changed local or remote Skills with
+the base catalog and each other using a separately configured Chat API. Reports
+would cite overlapping capabilities, meaningful differences, and uncertainty;
+maintainers would decide whether to combine or retain them. It would not reject
+skills automatically, execute imported code, or claim a missing/failed model
+response means no overlap. API endpoint, model, cost limits and data-sharing
+approval must be confirmed before implementation. No embedding service or new
+GitHub App is required for that proposed analysis.
+
 ## Removal and deprecation
 
 Remove a published skill when its owner disappears, its source is deleted, its

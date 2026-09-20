@@ -112,6 +112,8 @@ python3 scripts/contribute.py check
 # Remote synchronization is opt-in and separate from the local contribution flow.
 python3 scripts/sync_sources.py --check --component product-slug
 python3 scripts/sync_sources.py --component product-slug
+# Verify the reviewed snapshot, independently of later upstream changes.
+python3 scripts/sync_sources.py --check --locked --component product-slug
 ```
 
 After publication, verify discovery without installing:

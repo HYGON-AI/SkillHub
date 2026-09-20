@@ -32,7 +32,7 @@ jobs:
       - name: Check generated catalog files
         run: python scripts/generate_catalog.py --check
       - name: Resolve remote sources and verify lock provenance
-        run: python scripts/sync_sources.py --check
+        run: python scripts/sync_sources.py --check --locked
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: "22"
