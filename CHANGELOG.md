@@ -34,6 +34,11 @@ here. Generated skill synchronization updates may be grouped by release.
 
 ### Changed
 
+- Remote tree digests use case-sensitive portable relative-path ordering on all
+  operating systems, and synchronization disables automatic Git newline
+  conversion. Previously generated Windows remote locks need regeneration;
+  the existing local-only main catalog has no remote locks to migrate.
+
 - Local imports now preserve an existing `agents/openai.yaml` or, when absent,
   generate OpenAI/Codex interface metadata from the Skill name and description.
   Generated short descriptions respect the validator's 100-character limit.

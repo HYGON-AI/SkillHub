@@ -4,6 +4,7 @@
 """Exercise the Git clone/sparse-checkout path with a local upstream fixture."""
 
 import contextlib
+import hashlib
 import io
 import json
 import shutil
@@ -19,6 +20,19 @@ import sync_sources  # noqa: E402
 
 
 class ExternalSyncTests(unittest.TestCase):
+    def test_digest_uses_portable_case_sensitive_relative_order(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            names = ["agents/openai.yaml", "LICENSE", "skill-card.md", "SKILL.md"]
+            for name in names:
+                path = root / name
+                path.parent.mkdir(parents=True, exist_ok=True)
+                path.write_bytes(name.encode("utf-8"))
+            expected = hashlib.sha256()
+            for name in sorted(names):
+                expected.update(name.encode("utf-8") + b"\0" + name.encode("utf-8") + b"\0")
+            self.assertEqual(sync_sources.file_tree_digest(root), expected.hexdigest())
+
     def test_import_update_drift_and_failed_source_recovery(self):
         with tempfile.TemporaryDirectory() as temp:
             root = Path(temp)
