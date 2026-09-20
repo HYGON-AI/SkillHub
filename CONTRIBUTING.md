@@ -120,9 +120,9 @@ Then:
 
 7. Verify discovery from a clean checkout, then open a pull request with the owning team as reviewers.
 
-Remote synchronization currently runs on manual dispatch only. When the first
-remote component is admitted, administrators must explicitly record whether to
-restore scheduled synchronization and at what frequency.
+Remote synchronization supports manual dispatch and daily 01:17 UTC runs when
+`SKILLHUB_SYNC_ENABLED=true`. Enable scheduling only after manual acceptance and
+App configuration. Synchronization opens PRs; it never merges them automatically.
 
 ## Generator notes
 
@@ -214,7 +214,7 @@ discovery.
 - [ ] `python3 scripts/validate_skills.py` passes.
 - [ ] `python3 scripts/validate_agent_skills_spec.py` passes against the pinned reference implementation.
 - [ ] `python3 scripts/generate_catalog.py --check` passes.
-- [ ] `python3 scripts/sync_sources.py --check` proves every remote ref, commit, digest, lock entry and mirror agree.
+- [ ] `python3 scripts/sync_sources.py --check --locked` verifies recorded remote commits, registration metadata, digests and mirrors. Plain `--check` checks for newer upstream revisions.
 - [ ] `npx --yes skills@1.5.23 add . --list` discovers only the intended published skills.
 - [ ] `npx --yes skills@1.5.23 add . --list --full-depth` also discovers only the intended published skills.
 - [ ] No mirrored files were edited only in the catalog.

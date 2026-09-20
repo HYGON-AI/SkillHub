@@ -15,6 +15,7 @@ from pathlib import Path
 
 from skillhub import (
     ROOT,
+    COMMIT_RE,
     CatalogError,
     dump_json,
     file_tree_digest,
@@ -32,10 +33,24 @@ def write_utf8(path, content):
         stream.write(content)
 
 
-def clone_component(component, destination):
+def clone_component(component, destination, commit=None):
     url = "https://github.com/{}.git".format(component["repo"])
+    if commit is not None:
+        subprocess.check_call(["git", "init", str(destination)])
+        subprocess.check_call(["git", "-C", str(destination), "config", "core.autocrlf", "false"])
+        subprocess.check_call(["git", "-C", str(destination), "config", "core.eol", "lf"])
+        subprocess.check_call(["git", "-C", str(destination), "remote", "add", "origin", url])
+        subprocess.check_call(["git", "-C", str(destination), "fetch", "--depth", "1", "--filter=blob:none", "origin", commit])
+        subprocess.check_call(["git", "-C", str(destination), "sparse-checkout", "set", "--"] +
+                              [spec["path"] for spec in component["skills"]])
+        subprocess.check_call(["git", "-C", str(destination), "checkout", "--detach", "FETCH_HEAD"])
+        resolved = run(["git", "-C", str(destination), "rev-parse", "HEAD"])
+        if resolved != commit:
+            raise CatalogError("resolved commit does not match lock")
+        return resolved
     subprocess.check_call([
         "git", "clone", "--depth", "1", "--filter=blob:none", "--sparse",
+        "--config", "core.autocrlf=false", "--config", "core.eol=lf",
         "--branch", component["ref"], url, str(destination),
     ])
     paths = [spec["path"] for spec in component["skills"]]
@@ -62,11 +77,61 @@ def validate_source_tree(source):
             "; ".join(package_errors)))
 
 
+def publish_transaction(updates, lock_path, lock):
+    """Stage everything first; restore mirrors and lock on a write failure."""
+    root = ROOT.resolve()
+    if lock_path.resolve() != root / ".skillhub-lock.json":
+        raise CatalogError("lock destination must stay inside the catalog")
+    for _, destination in updates:
+        if destination.is_symlink() or destination.resolve().parent != root / "skills":
+            raise CatalogError("mirror destination must be a direct catalog skill directory")
+    transaction = Path(tempfile.mkdtemp(prefix=".skillhub-sync-", dir=root))
+    preserve_backup = False
+    try:
+        for index, (source, destination) in enumerate(updates):
+            shutil.copytree(source, transaction / str(index))
+        staged_lock = transaction / "lock.json"
+        write_utf8(staged_lock, dump_json(lock))
+        applied = []
+        lock_backup = transaction / "previous-lock.json"
+        try:
+            for index, (_, destination) in enumerate(updates):
+                destination.parent.mkdir(parents=True, exist_ok=True)
+                backup = transaction / (str(index) + "-previous")
+                if destination.exists():
+                    destination.rename(backup)
+                applied.append((destination, backup))
+                (transaction / str(index)).rename(destination)
+            if lock_path.exists():
+                lock_path.rename(lock_backup)
+            staged_lock.rename(lock_path)
+        except BaseException:
+            try:
+                if lock_backup.exists():
+                    lock_backup.replace(lock_path)
+                for destination, backup in reversed(applied):
+                    if destination.exists():
+                        shutil.rmtree(destination)
+                    if backup.exists():
+                        backup.rename(destination)
+            except BaseException as recovery_error:
+                preserve_backup = True
+                raise CatalogError("rollback failed; preserve and inspect backups at {}".format(
+                    transaction)) from recovery_error
+            raise
+    finally:
+        if not preserve_backup:
+            shutil.rmtree(transaction)
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--check", action="store_true", help="report drift without changing the catalog")
+    parser.add_argument("--locked", action="store_true", help="with --check, verify recorded commits instead of current source refs")
     parser.add_argument("--component", action="append", default=[], help="sync only this components.d file stem")
     args = parser.parse_args()
+    if args.locked and not args.check:
+        parser.error("--locked requires --check")
 
     try:
         components = load_components()
@@ -99,6 +164,7 @@ def main():
         return 1
 
     changed = set()
+    updates = []
     with tempfile.TemporaryDirectory(prefix="skillhub-sync-") as temp:
         temp_root = Path(temp)
         for component in components:
@@ -110,7 +176,21 @@ def main():
                 continue
             checkout = temp_root / slug
             print("clone {}@{}".format(component["repo"], component["ref"]))
-            commit = clone_component(component, checkout)
+            locked_commit = None
+            if args.locked:
+                commits = set()
+                for spec in component["skills"]:
+                    entry = lock["skills"].get(spec["catalog_dir"], {})
+                    if not isinstance(entry, dict):
+                        raise CatalogError("invalid lock entry for {}".format(spec["catalog_dir"]))
+                    commit = entry.get("commit")
+                    if not isinstance(commit, str) or not COMMIT_RE.fullmatch(commit):
+                        raise CatalogError("missing or invalid locked commit for {}".format(spec["catalog_dir"]))
+                    commits.add(commit)
+                if len(commits) != 1:
+                    raise CatalogError("one component must use one locked commit")
+                locked_commit = commits.pop()
+            commit = clone_component(component, checkout, locked_commit)
             for spec in component["skills"]:
                 source = checkout / Path(spec["path"])
                 if not source.is_dir() or not (source / "SKILL.md").is_file():
@@ -146,12 +226,7 @@ def main():
                 if source_digest != destination_digest:
                     changed.add(spec["catalog_dir"])
                     print("{} {}".format("would update" if args.check else "update", destination.relative_to(ROOT)))
-                    staged = temp_root / "staged" / spec["catalog_dir"]
-                    staged.parent.mkdir(parents=True, exist_ok=True)
-                    shutil.copytree(str(source), str(staged))
-                    if destination.exists():
-                        shutil.rmtree(str(destination))
-                    shutil.copytree(str(staged), str(destination))
+                    updates.append((source, destination))
                 lock["skills"][spec["catalog_dir"]] = {
                     "repo": component["repo"],
                     "ref": component["ref"],
@@ -159,22 +234,18 @@ def main():
                     "path": spec["path"],
                     "content_digest": source_digest,
                 }
+        if not args.check:
+            registered_remote = {
+                spec["catalog_dir"] for component in components if not component["local"]
+                for spec in component["skills"]
+            }
+            lock["skills"] = {name: value for name, value in lock["skills"].items()
+                              if name in registered_remote}
+            publish_transaction(updates, lock_path, lock)
 
     if args.check and changed:
         print("{} mirrored skill(s) differ from their source.".format(len(changed)))
         return 1
-    if not args.check:
-        registered_remote = set(
-            spec["catalog_dir"]
-            for component in components
-            if not component["local"]
-            for spec in component["skills"]
-        )
-        lock["skills"] = {
-            name: value for name, value in lock["skills"].items()
-            if name in registered_remote
-        }
-        write_utf8(lock_path, dump_json(lock))
     print("Synchronization complete; {} skill(s) changed.".format(len(changed)))
     return 0
 
@@ -182,6 +253,6 @@ def main():
 if __name__ == "__main__":
     try:
         sys.exit(main())
-    except (CatalogError, subprocess.CalledProcessError) as exc:
+    except (CatalogError, subprocess.CalledProcessError, OSError) as exc:
         print("ERROR: {}".format(exc))
         sys.exit(1)

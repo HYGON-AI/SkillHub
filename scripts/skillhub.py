@@ -566,7 +566,10 @@ def registered_skills(components, root=ROOT):
 
 def file_tree_digest(path):
     digest = hashlib.sha256()
-    for file_path in sorted(p for p in path.rglob("*") if p.is_file()):
+    # Path ordering is case-insensitive on Windows but case-sensitive on POSIX.
+    # Sort portable relative strings so the same bytes have the same digest.
+    for file_path in sorted((p for p in path.rglob("*") if p.is_file()),
+                            key=lambda p: p.relative_to(path).as_posix()):
         digest.update(str(file_path.relative_to(path)).replace("\\", "/").encode("utf-8"))
         digest.update(b"\0")
         digest.update(file_path.read_bytes())

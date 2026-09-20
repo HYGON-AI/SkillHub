@@ -10,6 +10,13 @@
       ]
     },
     {
+      "title": "Documentation",
+      "description": "HYGON-AI skills for documentation workflows.",
+      "skills": [
+        "sync-demo-release-summary"
+      ]
+    },
+    {
       "title": "Performance and Profiling",
       "description": "HYGON-AI skills for performance and profiling workflows.",
       "skills": [

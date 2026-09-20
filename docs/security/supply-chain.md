@@ -37,16 +37,21 @@ additional evidence applies:
 - Catalog mirrors and metadata are produced through pull requests.
 - Synchronization rejects symlinks, special files and paths outside the source package before copying.
 - Catalog validation verifies each remote lock entry against its component registration and published tree digest.
-- Pull-request validation resolves every remote ref independently and requires
-  the resolved commit, source digest, lock entry and published tree to agree.
+- Pull-request validation fetches each recorded commit independently and requires
+  the source digest, lock entry and published tree to agree. It does not require
+  a moving upstream branch to stay unchanged during review.
 - GitHub Actions dependencies and compatibility CLIs are pinned to reviewed
   commits or versions rather than floating major tags.
 
 ## Enforced remote integrity gate
 
-`scripts/sync_sources.py --check` clones each registered remote ref without
-modifying the catalog and fails unless its resolved commit and tree digest
-match `.skillhub-lock.json` and the published directory. Apply mode performs
+`scripts/sync_sources.py --check --locked` fetches each recorded commit without
+modifying the catalog and fails unless its tree digest and registration metadata
+match `.skillhub-lock.json` and the published directory. Missing or unavailable
+commits fail closed; there is no fallback to the latest branch. This proves
+content consistency, not that a commit is still reachable from a moving ref.
+Plain `--check` instead detects drift against the current registered branch/tag.
+Apply mode performs
 the same pre-copy path, symlink, special-file and package-boundary checks before
 updating a mirror.
 

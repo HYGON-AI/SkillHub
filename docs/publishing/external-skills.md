@@ -94,7 +94,7 @@ that remote mirror path.
    python scripts/validate_skills.py
    python scripts/validate_agent_skills_spec.py
    python scripts/generate_catalog.py --check
-   python scripts/sync_sources.py --check --component tool-skills
+   python scripts/sync_sources.py --check --locked --component tool-skills
    ```
 
    Apply mode creates the mirror and lock entry. `--check` reports drift and
@@ -110,8 +110,15 @@ that remote mirror path.
 After the first import is merged, run **Sync Opt-in Product Skills** manually
 from Actions. It fetches registered sources, validates packages, updates mirrors
 and locks, then uses the configured GitHub App to create/update a PR. All PR
-checks run again. No automatic merge is performed. If the source ref moves
-during review, re-sync; the provenance check compares against the current ref.
+checks run again. No automatic merge is performed. PR validation checks the
+locked commit, so later upstream changes do not invalidate unrelated PRs.
+Plain `--check` still compares against the latest source ref; apply mode picks
+up new revisions and updates the synchronization PR, requiring fresh review.
+
+After manual acceptance, set repository variable `SKILLHUB_SYNC_ENABLED=true`
+to enable the daily 01:17 UTC (09:17 Asia/Shanghai) schedule. GitHub may delay
+scheduled runs. Until enabled, only manual dispatch runs. All registered remote
+repositories share one update PR; unchanged runs create no new PR.
 
 For automated PRs, administrators must first configure the App and isolated
 quality runner described in [repository settings](../governance/repository-settings.md).
@@ -122,10 +129,11 @@ wait for the quality runner and required checks before publishing it.
 
 - Missing ref, deleted Skill, invalid package or failed quality check: fix the
   source/registration and retry; do not merge a partial import.
-- Sync operates in an expendable checkout and may have updated earlier packages
-  before a later source fails. The workflow stops before pushing a PR. For a
-  local multi-component failure, inspect/discard only generated changes on your
-  contribution branch and rerun; do not assume repository-wide rollback.
+- Sync downloads and validates every selected source before replacing any mirror.
+  A source failure leaves existing mirrors and lock unchanged. Publication write
+  errors trigger rollback; this is not a guarantee against process termination,
+  power loss, or a second filesystem failure during rollback. Use a clean,
+  disposable checkout for automation. No failure pushes or merges a PR.
 - Private sources require narrowly scoped read credentials and explicit public
   redistribution approval; access to a repository alone is not permission.
 - A name collision requires an upstream rename or a separately maintained local

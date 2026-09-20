@@ -27,9 +27,9 @@ For the step-by-step contributor path, see
 6. Verify discovery from the published repository before announcing release.
 
 For an existing third-party package, follow [Import external skills](external-skills.md).
-Synchronization runs on manual dispatch only. Admitting the first remote
-component requires an explicit decision on whether to restore scheduled
-synchronization and at what frequency.
+Synchronization supports manual dispatch and a daily 01:17 UTC schedule gated
+by `SKILLHUB_SYNC_ENABLED=true`. Enable it only after App configuration and manual
+acceptance. PR checks verify locked commits; latest-ref drift checks are separate.
 
 ## Optional catalog-owned prototype
 

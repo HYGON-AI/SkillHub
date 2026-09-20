@@ -427,7 +427,7 @@ class ContributionTests(unittest.TestCase):
         self.assertEqual(code, 0, output)
         commands = [call.args[0] for call in runner.call_args_list]
         self.assertEqual(commands[0], [sys.executable, "scripts/generate_catalog.py"])
-        self.assertEqual(commands[5], [sys.executable, "scripts/sync_sources.py", "--check"])
+        self.assertEqual(commands[5], [sys.executable, "scripts/sync_sources.py", "--check", "--locked"])
         self.assertEqual(commands[6], ["npx.cmd", "--yes", "skills@1.5.23", "add", ".", "--list"])
         self.assertEqual(commands[-2], ["npx.cmd", "--yes", "skills@1.5.23", "add", ".", "--list", "--full-depth"])
         self.assertIn("No branch, Git index, commit, push or pull request is created", output)

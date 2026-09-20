@@ -1,0 +1,8 @@
+name: "SkillHub Sync Demo"
+repo: "tianlinyang77/skillhub-sync-demo"
+ref: "main"
+description: "Public demonstration of reviewed remote skill synchronization."
+skills:
+  - path: "skills/sync-demo-release-summary"
+    catalog_dir: "sync-demo-release-summary"
+    category: "Documentation"
