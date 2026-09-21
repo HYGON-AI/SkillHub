@@ -4,6 +4,8 @@ on:
   workflow_dispatch:
   schedule:
     - cron: '17 1 * * *'
+    # Temporary read-only probe at 11:27 Asia/Shanghai; remove after diagnosis.
+    - cron: '27 3 * * *'
 
 permissions:
   contents: read
@@ -13,8 +15,23 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  schedule-probe:
+    if: github.event_name == 'schedule' && github.event.schedule == '27 3 * * *'
+    runs-on: ubuntu-latest
+    permissions: {}
+    timeout-minutes: 2
+    steps:
+      - name: Record scheduler delivery without repository writes
+        env:
+          PROBE_EVENT: ${{ github.event_name }}
+          PROBE_SCHEDULE: ${{ github.event.schedule }}
+          PROBE_SHA: ${{ github.sha }}
+        run: |
+          date -u '+Observed UTC: %Y-%m-%dT%H:%M:%SZ'
+          printf 'Event: %s\nSchedule: %s\nCommit: %s\n' "$PROBE_EVENT" "$PROBE_SCHEDULE" "$PROBE_SHA"
+          echo 'Read-only schedule probe: no checkout, secrets, sync, push or PR mutation.'
   sync:
-    if: github.event_name == 'workflow_dispatch' || vars.SKILLHUB_SYNC_ENABLED == 'true'
+    if: github.event_name == 'workflow_dispatch' || (github.event_name == 'schedule' && github.event.schedule == '17 1 * * *' && vars.SKILLHUB_SYNC_ENABLED == 'true')
     runs-on: ubuntu-latest
     steps:
       - name: Require synchronization App configuration
