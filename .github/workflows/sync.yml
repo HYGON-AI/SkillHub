@@ -4,9 +4,6 @@ on:
   workflow_dispatch:
   schedule:
     - cron: '17 1 * * *'
-    # Temporary 2026-09-21 probe: 14:23/33/43/53 Asia/Shanghai.
-    # Cron has no year field; remove this entry and probe job after diagnosis.
-    - cron: '23,33,43,53 6 21 9 *'
 
 permissions:
   contents: read
@@ -16,25 +13,6 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  schedule-probe:
-    if: github.event_name == 'schedule' && github.event.schedule == '23,33,43,53 6 21 9 *'
-    runs-on: ubuntu-latest
-    permissions: {}
-    timeout-minutes: 2
-    steps:
-      - name: Record scheduler delivery without repository writes
-        env:
-          PROBE_EVENT: ${{ github.event_name }}
-          PROBE_SCHEDULE: ${{ github.event.schedule }}
-          PROBE_SHA: ${{ github.sha }}
-        run: |
-          if [ "$(date -u +%F)" != '2026-09-21' ]; then
-            echo 'Probe window expired; remove the temporary schedule configuration.'
-            exit 0
-          fi
-          date -u '+Observed UTC: %Y-%m-%dT%H:%M:%SZ'
-          printf 'Event: %s\nSchedule: %s\nCommit: %s\n' "$PROBE_EVENT" "$PROBE_SCHEDULE" "$PROBE_SHA"
-          echo 'Read-only schedule probe: no checkout, secrets, sync, push or PR mutation.'
   sync:
     if: github.event_name == 'workflow_dispatch' || (github.event_name == 'schedule' && github.event.schedule == '17 1 * * *' && vars.SKILLHUB_SYNC_ENABLED == 'true')
     runs-on: ubuntu-latest
