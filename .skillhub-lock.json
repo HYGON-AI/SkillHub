@@ -4,9 +4,9 @@
     "sync-demo-release-summary": {
       "repo": "tianlinyang77/skillhub-sync-demo",
       "ref": "main",
-      "commit": "ec2a8610b7feeb278f0c3b3380e2dfcf614a98ae",
+      "commit": "65e7451c62247a14b79841dbc229c196c3188247",
       "path": "skills/sync-demo-release-summary",
-      "content_digest": "0cac1d19434e6ce732bdc110efcee09e922fa37c48a63806339ee808375cab7d"
+      "content_digest": "3cc913cb8971397013749b1c3860749b61e436cbf786496bda46588495bda9ff"
     }
   }
 }
