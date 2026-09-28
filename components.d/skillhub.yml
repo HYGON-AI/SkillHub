@@ -2,11 +2,11 @@ name: SkillHub
 repo: HYGON-AI/SkillHub
 ref: main
 local: true
-description: Author, validate, onboard, and publish portable Agent Skills across HYGON-AI projects.
+description: Publicly approved HYGON-AI Agent Skills.
 skills:
-  - path: skills/skillhub-contributor
-    catalog_dir: skillhub-contributor
-    category: Developer Tools
-  - path: "skills/torch-trace-operator-profiler"
-    catalog_dir: "torch-trace-operator-profiler"
-    category: "Performance and Profiling"
+- path: skills/skillhub-contributor
+  catalog_dir: skillhub-contributor
+  category: Developer Tools
+- path: skills/torch-trace-operator-profiler
+  catalog_dir: torch-trace-operator-profiler
+  category: Performance and Profiling
