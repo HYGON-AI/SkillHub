@@ -1,13 +1,12 @@
 ---
 schema_version: 1
-owner: "HYGON-AI HCU performance team"
+owner: HYGON-AI HCU performance team
 source:
   repo: HYGON-AI/SkillHub
   path: skills/torch-trace-operator-profiler
-license: "Apache-2.0"
+license: Apache-2.0
 lifecycle: published
 ---
-
 # Skill Card
 
 ## Summary

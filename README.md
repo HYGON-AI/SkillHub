@@ -107,8 +107,7 @@ not contain nested `SKILL.md` files or depend on sibling skills. See the
 
 | Product | Description | Skills |
 |---|---|---|
-| **SkillHub** | Author, validate, onboard, and publish portable Agent Skills across HYGON-AI projects. | [`skillhub-contributor`](skills/skillhub-contributor), [`torch-trace-operator-profiler`](skills/torch-trace-operator-profiler) |
-| **SkillHub Sync Demo** | Public demonstration of reviewed remote skill synchronization. | [`sync-demo-release-summary`](skills/sync-demo-release-summary) |
+| **SkillHub** | Publicly approved HYGON-AI Agent Skills. | [`skillhub-contributor`](skills/skillhub-contributor), [`torch-trace-operator-profiler`](skills/torch-trace-operator-profiler) |
 
 <!-- catalog:end -->
 
@@ -116,19 +115,13 @@ not contain nested `SKILL.md` files or depend on sibling skills. See the
 
 <!-- categories:start -->
 
-3 skills across 3 categories.
+2 skills across 2 categories.
 
 ### Developer Tools
 
 | Skill | Product | Description |
 |---|---|---|
 | [`skillhub-contributor`](skills/skillhub-contributor) | SkillHub | Create, review, and onboard portable Agent Skills into HYGON-AI SkillHub. Use when adding a new SKILL.md to the catalog, registering a local or remote component in components.d, preparing a SkillHub contribution, or diagnosing catalog validation and synchronization failures. |
-
-### Documentation
-
-| Skill | Product | Description |
-|---|---|---|
-| [`sync-demo-release-summary`](skills/sync-demo-release-summary) | SkillHub Sync Demo | Demonstrate a release-note summary from supplied public changes; use for sync-pilot examples, not release approval or security review. |
 
 ### Performance and Profiling
 
